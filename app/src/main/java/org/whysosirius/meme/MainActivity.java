@@ -24,7 +24,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
+    final static String APP_PREFERENCES = "prefs";
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
     private ViewPager mViewPager;
@@ -64,14 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
         private RecyclerView.Adapter adapter;
 
@@ -81,11 +75,6 @@ public class MainActivity extends AppCompatActivity {
         public void setAdapter(RecyclerView.Adapter adapter) {
             this.adapter = adapter;
         }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
 
         public static PlaceholderFragment newInstance(int sectionNumber, RecyclerView.Adapter adapter) {
             PlaceholderFragment fragment = new PlaceholderFragment();
@@ -114,10 +103,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
