@@ -17,47 +17,25 @@ import org.whysosirius.meme.database.Meme;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by frohenk on 1/14/18.
- */
 
-public class FirstMemeAdapter extends RecyclerView.Adapter<FirstMemeAdapter.ViewHolder> implements RecyclerViewContainer {
+public class FirstMemeAdapter extends MemeAdapter {
 
-
-    private ArrayList<Meme> memes;
-    private Context context;
     private SecondMemeAdapter secondMemeAdapter;
     private HashMap<Meme, Integer> memeTotalPositionMap;
     private int totalPosition;
-    private int maxLoadedPosition;
-    private RecyclerView recyclerView;
+    private long maxLoadedPosition;
 
     @SuppressLint("UseSparseArrays")
     public FirstMemeAdapter(Context context, ArrayList<Meme> memes) {
-        this.memes = memes;
-        this.context = context;
+        super(context, memes);
         totalPosition = 0;
         memeTotalPositionMap = new HashMap<>();
     }
 
-    public FirstMemeAdapter setSecondMemeAdapter(SecondMemeAdapter secondMemeAdapter) {
-        this.secondMemeAdapter = secondMemeAdapter;
-        return this;
-    }
-
-
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.meme_layout, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-
+    public void onBindViewHolder(MemeAdapter.ViewHolder holder, int position) {
         Meme meme = memes.get(position);
 
-        //long itemId = getItemId(position);
         if (!memeTotalPositionMap.containsKey(meme)) {
             memeTotalPositionMap.put(meme, totalPosition++);
         }
@@ -68,6 +46,11 @@ public class FirstMemeAdapter extends RecyclerView.Adapter<FirstMemeAdapter.View
         holder.memeTitleTextView.setText(meme.getTitle());
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
         Log.i("siriusmeme", meme.getTitle() + " : " + holder.totalPosition + " " + String.valueOf(position));
+    }
+
+    public FirstMemeAdapter setSecondMemeAdapter(SecondMemeAdapter secondMemeAdapter) {
+        this.secondMemeAdapter = secondMemeAdapter;
+        return this;
     }
 
     @Override
@@ -84,36 +67,7 @@ public class FirstMemeAdapter extends RecyclerView.Adapter<FirstMemeAdapter.View
                     notifyItemRemoved(0);
                 }
             });
-
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return memes.size();
-    }
-
-    @Override
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-    @Override
-    public void setRecyclerView(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
-    }
-
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView memeTitleTextView;
-        ImageView memeImageView;
-        public int totalPosition;
-
-        public ViewHolder(View view) {
-            super(view);
-
-            memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
-            memeImageView = (ImageView) view.findViewById(R.id.meme_image);
-            totalPosition = -1;
-        }
-    }
 }

@@ -25,19 +25,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
+    final static String host = "";
     private ViewPager mViewPager;
     private FirstMemeAdapter firstMemeAdapter;
     private SecondMemeAdapter secondMemeAdapter;
@@ -50,10 +39,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Meme> memes = new ArrayList<>();
         ArrayList<Meme> memes2 = new ArrayList<>();
         memes2.add(new Meme("http://azatismagilov00.siteme.org/kek/HvCNOep1oRLhKT5ubjR41.jpg").setTitle("kek"));
-        for (int i = 0; i < 1000; i++) {
 
-            memes.add(new Meme("http://azatismagilov00.siteme.org/kek/J8PifIWG6E2z0px8XE3Jb.jpg").setTitle("keke " + i));
-        }
 
         firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), memes);
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), memes2);
