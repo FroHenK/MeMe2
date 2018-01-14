@@ -1,5 +1,7 @@
 package org.whysosirius.meme;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,12 +32,12 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private FirstMemeAdapter firstMemeAdapter;
     private SecondMemeAdapter secondMemeAdapter;
-
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        preferences = getSharedPreferences(APP_PREFERENCES,MODE_PRIVATE);
         ArrayList<Meme> memes = new ArrayList<>();
         ArrayList<Meme> memes2 = new ArrayList<>();
         memes2.add(new Meme("http://azatismagilov00.siteme.org/kek/HvCNOep1oRLhKT5ubjR41.jpg").setTitle("kek"));
@@ -49,19 +51,24 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        Intent login_intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(login_intent, 1337);
+    }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1337){
+            Log.i("Login", "Success");
+        }
+            super.onActivityResult(requestCode, resultCode, data);
     }
 
     public static class PlaceholderFragment extends Fragment {

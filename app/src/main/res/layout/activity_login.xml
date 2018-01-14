@@ -8,16 +8,14 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="29dp">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/pict"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
             android:layout_centerHorizontal="true"
-            android:src="@android:drawable/ic_secure" />
+            android:src="@drawable/icon_meme" />
 
         <TextView
             android:id="@+id/ttext"

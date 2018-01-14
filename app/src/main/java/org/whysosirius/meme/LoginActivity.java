@@ -144,6 +144,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void checkConnection() {
         if (sharedPreferences.contains("auth_token")) {
+            loginButton.setVisibility(View.GONE);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -228,22 +229,19 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
         loginButton = (ImageButton) findViewById(R.id.vk_login);
-        loginButton.setVisibility(View.GONE);
-        checkConnection();
+        //checkConnection();
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 connect();
             }
         });
-
     }
 
     @Override
