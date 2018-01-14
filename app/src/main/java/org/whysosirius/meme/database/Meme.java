@@ -13,60 +13,6 @@ public class Meme extends Documentable {
     private Integer rating;
 
 
-    public ObjectId getId() {
-        return id;
-    }
-
-    public BsonTimestamp getTime() {
-        return time;
-    }
-
-    public ObjectId getAuthorId() {
-        return authorId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public Integer getRating() {
-        return rating != null ? rating : 0;
-    }
-
-    public Meme setId(ObjectId id) {
-        this.id = id;
-        return this;
-    }
-
-    public Meme setTime(BsonTimestamp time) {
-        this.time = time;
-        return this;
-    }
-
-    public Meme setAuthorId(ObjectId authorId) {
-        this.authorId = authorId;
-        return this;
-    }
-
-    public Meme setTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public Meme setUrl(String url) {
-        this.url = url;
-        return this;
-    }
-
-    public Meme setRating(Integer rating) {
-        this.rating = rating;
-        return this;
-    }
-
     public Meme() {
         super();
     }
@@ -80,9 +26,62 @@ public class Meme extends Documentable {
         this.time = time;
     }
 
-
     public Meme(Document document) {
         super(document);
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public Meme setId(ObjectId id) {
+        this.id = id;
+        return this;
+    }
+
+    public BsonTimestamp getTime() {
+        return time;
+    }
+
+    public Meme setTime(BsonTimestamp time) {
+        this.time = time;
+        return this;
+    }
+
+    public ObjectId getAuthorId() {
+        return authorId;
+    }
+
+    public Meme setAuthorId(ObjectId authorId) {
+        this.authorId = authorId;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Meme setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public Meme setUrl(String url) {
+        this.url = url;
+        return this;
+    }
+
+    public Integer getRating() {
+        return rating != null ? rating : 0;
+    }
+
+    public Meme setRating(Integer rating) {
+        this.rating = rating;
+        return this;
     }
 
     public Document toDocument() {

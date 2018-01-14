@@ -8,33 +8,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import org.whysosirius.meme.database.Meme;
 
 import java.util.ArrayList;
 
-public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewHolder> implements RecyclerViewContainer{
+public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewHolder> implements RecyclerViewContainer {
     protected ArrayList<Meme> memes;
     protected Context context;
     protected RecyclerView recyclerView;
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView memeTitleTextView;
-        ImageView memeImageView;
-        public long totalPosition;
 
-        public ViewHolder(View view) {
-            super(view);
-
-            memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
-            memeImageView = (ImageView) view.findViewById(R.id.meme_image);
-            totalPosition = -1;
-        }
-    }
     public MemeAdapter(Context context, ArrayList<Meme> memes) {
         this.memes = memes;
         this.context = context;
     }
+
     public void addMemeOnTop(Meme meme) {
         memes.add(0, meme);
         recyclerView.post(new Runnable() {
@@ -44,13 +31,16 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             }
         });
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.meme_layout, parent, false);
         return new ViewHolder(view);
     }
+
     @Override
     public abstract void onBindViewHolder(ViewHolder holder, int position);
+
     @Override
     public int getItemCount() {
         return memes.size();
@@ -67,5 +57,19 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
     public void setRecyclerView(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public long totalPosition;
+        TextView memeTitleTextView;
+        ImageView memeImageView;
+
+        public ViewHolder(View view) {
+            super(view);
+
+            memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
+            memeImageView = (ImageView) view.findViewById(R.id.meme_image);
+            totalPosition = -1;
+        }
     }
 }
