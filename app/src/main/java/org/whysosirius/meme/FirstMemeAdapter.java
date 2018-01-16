@@ -18,16 +18,16 @@ public class FirstMemeAdapter extends MemeAdapter {
     @SuppressLint("UseSparseArrays")
     public FirstMemeAdapter(Context context, ArrayList<Meme> memes) {
         super(context, memes);
+    }
 
+    public FirstMemeAdapter(Context context, String url) {
+        super(context, url);
     }
 
     @Override
     public void onBindViewHolder(MemeAdapter.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         Meme meme = memes.get(position);
-
-        holder.memeTitleTextView.setText(meme.getTitle());
-        Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
     }
 
     public void setSecondMemeAdapter(SecondMemeAdapter secondMemeAdapter) {

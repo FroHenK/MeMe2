@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public class Meme extends Documentable {
     private String url;
-    private LocalDateTime time;
+    private Long time;
     private String authorId;
     private String id;
     private String title;

@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         memes2.add(new Meme("http://azatismagilov00.siteme.org/kek/HvCNOep1oRLhKT5ubjR41.jpg").setTitle("kek"));
 
 
-        firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), memes);
+        firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), "https://memkekkekmem.herokuapp.com/get_new_list");
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), memes2);
 
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);

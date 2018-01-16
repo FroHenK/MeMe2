@@ -10,16 +10,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.whysosirius.meme.database.Meme;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewHolder> implements RecyclerViewContainer {
@@ -48,7 +54,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public MemeAdapter(Context context, String url) {
         this(context, new ArrayList<>());
         memeFetcher = new MemeFetcher();
-        memeFetcher.execute(url);
+        memeFetcher.execute(url);//start meme fetcher service (AsyncTask)
     }
 
     public void addMemeOnTop(Meme meme) {
@@ -73,6 +79,11 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         if (maxLoadedPosition < holder.totalPosition)
             maxLoadedPosition = holder.totalPosition;
 
+        if(meme.getTitle()!=null)
+        holder.memeTitleTextView.setText(meme.getTitle());
+        else
+            holder.memeTitleTextView.setText("meme #"+holder.totalPosition);
+        Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
     }
 
     @Override
@@ -116,18 +127,53 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                 try {
                     if (TRIGGER_MEME + maxLoadedPosition - totalMemesLoaded >= 0) {
                         Log.i("siriusmeme", "started load");
-                        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-                        JsonObjectRequest request = new JsonObjectRequest(strings[0], new JSONObject(), future, future);
-                        VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
-                        JSONObject response = future.get();
-                        if (response.getString("status").equals("success")) {
-                            JSONArray memes = response.getJSONArray("links");
+                        RequestFuture<String> future = RequestFuture.newFuture();
+                        StringRequest request = new StringRequest(Request.Method.POST, strings[0], future, future) {
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                HashMap<String, String> map = new HashMap<>();
+                                map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
+                                map.put("count", "30");
+                                if (MemeAdapter.this.memes.size() != 0)
+                                    map.put("last", MemeAdapter.this.memes.get(MemeAdapter.this.memes.size() - 1).getId().toHexString());
+                                else
+                                    map.put("last", "null");
 
+                                return map;
+                            }
+                        };
+
+
+                        VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
+                        String response = future.get();
+                        Log.i("siriusmeme", response);
+
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+                        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+                        JsonNode node = objectMapper.readTree(response);
+
+                        if (node.get("status").asText().equals("success")) {
+                            JsonNode memesNode = node.get("links");
+                            ArrayList<Meme> memes = new ArrayList<>();
+                            for (int i = 0; i < memesNode.size(); i++) {
+                                Meme meme = objectMapper.treeToValue(memesNode.get(i), Meme.class);
+                                memes.add(meme);
+                            }
+                            totalMemesLoaded += memes.size();
+                            MemeAdapter.this.memes.addAll(memes);
+                            publishProgress(memes);
                         }
                     }
-                    Thread.sleep(400);
-                } catch (JSONException | InterruptedException | ExecutionException e) {
+                } catch (InterruptedException | IOException | ExecutionException e) {
                     Log.e(MemeAdapter.class.getName(), "siriusmeme", e);
+                }
+
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -135,7 +181,6 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         @Override
         protected void onProgressUpdate(ArrayList<Meme>[] values) {
             int size = memes.size();
-            memes.addAll(values[0]);
             recyclerView.post(() -> notifyItemRangeInserted(size, values[0].size()));
         }
     }

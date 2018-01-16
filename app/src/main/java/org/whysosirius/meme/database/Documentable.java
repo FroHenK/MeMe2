@@ -19,21 +19,16 @@ public abstract class Documentable {
     public Documentable() {
     }
 
-    //doesnt work
-    @Deprecated
-    public static BsonTimestamp toBsonTimestamp(LocalDateTime dateTime) {
+    public static BsonTimestamp toBsonTimestamp(Long dateTime) {
         if (dateTime == null)
             return null;
         return new BsonTimestamp();
     }
 
-    //doesn't work
-    @Deprecated
-    public static LocalDateTime fromBsonTimestamp(BsonTimestamp timestamp) {
+    public static Long fromBsonTimestamp(BsonTimestamp timestamp) {
         if (timestamp == null)
             return null;
-
-        return null;
+        return timestamp.getValue();
     }
 
     public static ObjectId toObjectId(String id) {
