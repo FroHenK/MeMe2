@@ -2,35 +2,27 @@ package org.whysosirius.meme;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.whysosirius.meme.database.Meme;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     final static String APP_PREFERENCES = "prefs";
@@ -44,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferences = getSharedPreferences(APP_PREFERENCES,MODE_PRIVATE);
+        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
         ArrayList<Meme> memes = new ArrayList<>();
         ArrayList<Meme> memes2 = new ArrayList<>();
         memes2.add(new Meme("http://azatismagilov00.siteme.org/kek/HvCNOep1oRLhKT5ubjR41.jpg").setTitle("kek"));
@@ -66,14 +58,15 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, 1337);
+
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivityForResult(intent, 1337);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1337){
+        if (requestCode == 1337) {
             Log.i("Login", "Success");
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
@@ -116,11 +109,12 @@ public class MainActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             RecyclerView recyclerView = rootView.findViewById(R.id.main_recycler_view);
+            ((RecyclerViewContainer) adapter).setRecyclerView(recyclerView);
             recyclerView.setHasFixedSize(true);//if memes become expandable delete this
 
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
-            ((RecyclerViewContainer)adapter).setRecyclerView(recyclerView);
+
 
             recyclerView.setAdapter(adapter);
 
