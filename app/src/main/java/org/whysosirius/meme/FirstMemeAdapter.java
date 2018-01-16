@@ -18,12 +18,17 @@ public class FirstMemeAdapter extends MemeAdapter {
     private HashMap<Meme, Integer> memeTotalPositionMap;
     private int totalPosition;
     private long maxLoadedPosition;
+    private long totalMemesLoaded;
+    private static final int MEMES_IN_PAGE = 30;
+    private static final int TRIGGER_MEME = 10;//must be lesser than MEMES_IN_PAGE and greater than zero, otherwise -> butthurt
 
     @SuppressLint("UseSparseArrays")
     public FirstMemeAdapter(Context context, ArrayList<Meme> memes) {
         super(context, memes);
         totalPosition = 0;
+        totalMemesLoaded = memes.size();
         memeTotalPositionMap = new HashMap<>();
+
     }
 
     @Override
@@ -39,19 +44,17 @@ public class FirstMemeAdapter extends MemeAdapter {
 
         holder.memeTitleTextView.setText(meme.getTitle());
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
-        Log.i("siriusmeme", meme.getTitle() + " : " + holder.totalPosition + " " + String.valueOf(position));
     }
 
-    public FirstMemeAdapter setSecondMemeAdapter(SecondMemeAdapter secondMemeAdapter) {
+    public void setSecondMemeAdapter(SecondMemeAdapter secondMemeAdapter) {
         this.secondMemeAdapter = secondMemeAdapter;
-        return this;
     }
 
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
         if (holder.totalPosition < maxLoadedPosition) {
-            Log.i("siriusmeme", holder.memeTitleTextView.getText() + " to next second page");
+            Log.v("siriusmeme", holder.memeTitleTextView.getText() + " is being transferred to the SecondMemeAdapter");
             secondMemeAdapter.addMemeOnTop(memes.get(0));
             memes.remove(0);//usually it's the first element from top that gets recycled
 
@@ -63,5 +66,4 @@ public class FirstMemeAdapter extends MemeAdapter {
             });
         }
     }
-
 }
