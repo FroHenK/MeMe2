@@ -47,13 +47,12 @@ public class MainActivity extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
-        ArrayList<Meme> memes = new ArrayList<>();
-        ArrayList<Meme> memes2 = new ArrayList<>();
-        memes2.add(new Meme("http://azatismagilov00.siteme.org/kek/HvCNOep1oRLhKT5ubjR41.jpg").setTitle("kek"));
 
+        ArrayList<Meme> memes = new ArrayList<>();
+        memes.add(new Meme("https://www.google.ru/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png"));
 
         firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), "https://memkekkekmem.herokuapp.com/get_new_list");
-        secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), memes2);
+        secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), "https://memkekkekmem.herokuapp.com/get_old_list");
 
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 

@@ -40,8 +40,9 @@ public class FirstMemeAdapter extends MemeAdapter {
         if (holder.totalPosition < maxLoadedPosition) {
             Log.v("siriusmeme", holder.memeTitleTextView.getText() + " is being transferred to the SecondMemeAdapter");
             secondMemeAdapter.addMemeOnTop(memes.get(0));
-            memes.remove(0);//usually it's the first element from top that gets recycled
 
+
+            memes.remove(0);//usually it's the first element from top that gets recycled
             recyclerView.post(() -> notifyItemRemoved(0));
         }
     }

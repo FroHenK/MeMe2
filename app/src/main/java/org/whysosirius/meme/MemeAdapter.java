@@ -54,12 +54,16 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public MemeAdapter(Context context, String url) {
         this(context, new ArrayList<>());
         memeFetcher = new MemeFetcher();
-        memeFetcher.execute(url);//start meme fetcher service (AsyncTask)
+        memeFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);//start meme fetcher service (AsyncTask)
     }
 
     public void addMemeOnTop(Meme meme) {
         memes.add(0, meme);
-        recyclerView.post(() -> notifyItemInserted(0));
+        recyclerView.post(() -> {
+            notifyItemInserted(0);
+            recyclerView.scrollToPosition(0);
+        });
+
     }
 
     @Override
@@ -79,10 +83,11 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         if (maxLoadedPosition < holder.totalPosition)
             maxLoadedPosition = holder.totalPosition;
 
-        if(meme.getTitle()!=null)
-        holder.memeTitleTextView.setText(meme.getTitle());
+        if (meme.getTitle() != null)
+            holder.memeTitleTextView.setText(meme.getTitle());
         else
-            holder.memeTitleTextView.setText("meme #"+holder.totalPosition);
+            holder.memeTitleTextView.setText("meme #" + holder.totalPosition);
+
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
     }
 
@@ -126,7 +131,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             while (true) {//FIXME endless loop
                 try {
                     if (TRIGGER_MEME + maxLoadedPosition - totalMemesLoaded >= 0) {
-                        Log.i("siriusmeme", "started load");
+                        Log.i("siriusmeme", "started load" + strings[0]);
                         RequestFuture<String> future = RequestFuture.newFuture();
                         StringRequest request = new StringRequest(Request.Method.POST, strings[0], future, future) {
                             @Override
@@ -182,6 +187,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         protected void onProgressUpdate(ArrayList<Meme>[] values) {
             int size = memes.size();
             recyclerView.post(() -> notifyItemRangeInserted(size, values[0].size()));
+            this.cancel(true);
         }
     }
 }

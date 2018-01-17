@@ -12,4 +12,12 @@ public class SecondMemeAdapter extends MemeAdapter {
         super(context, memes);
     }
 
+    public SecondMemeAdapter(Context applicationContext, String url) {
+        super(applicationContext, url);
+    }
+
+    @Override
+    public void onBindViewHolder(MemeAdapter.ViewHolder holder, int position) {
+        super.onBindViewHolder(holder, position);
+    }
 }
