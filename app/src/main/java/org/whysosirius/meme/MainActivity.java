@@ -59,9 +59,9 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-//        Intent intent = new Intent(this, LoginActivity.class);
-//        startActivityForResult(intent, 1337);
-    }
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, 1337);
+}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 // ...
             }
         }
-
     }
 
     public static class PlaceholderFragment extends Fragment {

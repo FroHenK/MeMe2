@@ -6,29 +6,18 @@
     android:layout_height="match_parent"
     tools:context="org.whysosirius.meme.LoginActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/pict"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/icon_meme" />
-
-        <TextView
-            android:id="@+id/ttext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/pict"
-            android:text="Memes Application" />
-
-        <ImageButton
-            android:id="@+id/vk_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ttext"
-            android:src="@drawable/vk_login" />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:layout_marginBottom="575dp"
+        android:layout_marginEnd="300dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="55dp"
+        android:text="Login via eMail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.31"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

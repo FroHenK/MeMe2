@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,20 +25,41 @@ public class LoginActivity extends AppCompatActivity {
     public static final String HOST = "memkekkekmem.herokuapp.com";
     public static final int RegMode = 1488;
     private SharedPreferences sharedPreferences;
+    private FirebaseUser firebaseUser;
+    private FirebaseAuth mAuth;
+    private void onLogin(){
 
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser != null){
+            onLogin();
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mAuth = FirebaseAuth.getInstance();''
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        ImageButton imageButton = (ImageButton) findViewById(R.id.vk_login);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        Button button = findViewById(R.id.button2);
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null){
+            AuthUI.getInstance().signOut(this);
+        }
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
-                startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(providers).build(), 1337);
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(
+                                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()))
+                                .build(), 1337);
             }
-        });
+            });
     }
 
     @Override
