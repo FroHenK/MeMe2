@@ -4,11 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
-import com.squareup.picasso.Picasso;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.toolbox.RequestFuture;
+import com.android.volley.toolbox.StringRequest;
 
 import org.whysosirius.meme.database.Meme;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class FirstMemeAdapter extends MemeAdapter {
@@ -39,11 +44,28 @@ public class FirstMemeAdapter extends MemeAdapter {
         super.onViewRecycled(holder);
         if (holder.totalPosition < maxLoadedPosition) {
             Log.v("siriusmeme", holder.memeTitleTextView.getText() + " is being transferred to the SecondMemeAdapter");
-            secondMemeAdapter.addMemeOnTop(memes.get(0));
 
+            secondMemeAdapter.addMemeOnTop(memes.get(0));//usually it's the first element from top that gets recycled
+            setViewedOnServer(memes.get(0));
+            memes.remove(0);
 
-            memes.remove(0);//usually it's the first element from top that gets recycled
             recyclerView.post(() -> notifyItemRemoved(0));
         }
+    }
+
+    private void setViewedOnServer(Meme meme) {
+        RequestFuture<String> future = RequestFuture.newFuture();
+        StringRequest request = new StringRequest(Request.Method.POST, "https://memkekkekmem.herokuapp.com/set_viewed", future, future) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
+                map.put("meme_id", meme.getId().toHexString());
+                return map;
+            }
+        };
+
+
+        VolleySingleton.getInstance(this.context).addToRequestQueue(request);
     }
 }
