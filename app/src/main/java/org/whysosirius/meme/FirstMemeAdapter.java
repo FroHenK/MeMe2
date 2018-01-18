@@ -46,6 +46,7 @@ public class FirstMemeAdapter extends MemeAdapter {
             Log.v("siriusmeme", holder.memeTitleTextView.getText() + " is being transferred to the SecondMemeAdapter");
 
             secondMemeAdapter.addMemeOnTop(memes.get(0));//usually it's the first element from top that gets recycled
+            secondMemeAdapter.userIdsToUsernames.put(memes.get(0).getAuthorId().toHexString(), userIdsToUsernames.get(memes.get(0).getAuthorId().toHexString()));
             setViewedOnServer(memes.get(0));
             memes.remove(0);
 

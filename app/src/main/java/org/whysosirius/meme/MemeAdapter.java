@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
@@ -25,6 +26,7 @@ import org.whysosirius.meme.database.Meme;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -34,6 +36,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     protected RecyclerView recyclerView;
 
     private HashMap<Meme, Integer> memeTotalPositionMap;
+    protected HashMap<String, String> userIdsToUsernames;
 
     protected int totalPosition;
     protected long maxLoadedPosition;
@@ -49,6 +52,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         totalPosition = 0;
         totalMemesLoaded = memes.size();
         memeTotalPositionMap = new HashMap<>();
+        userIdsToUsernames = new HashMap<>();
     }
 
     public MemeAdapter(Context context, String url) {
@@ -88,6 +92,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         else
             holder.memeTitleTextView.setText("meme #" + holder.totalPosition);
 
+        holder.memeAuthorTextView.setText(userIdsToUsernames.get(meme.getAuthorId().toHexString()));
+
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
     }
 
@@ -111,11 +117,18 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public long totalPosition;
+
+        ImageView memeAuthorImageView;
+        TextView memeAuthorTextView;
+
         TextView memeTitleTextView;
         ImageView memeImageView;
 
         public ViewHolder(View view) {
             super(view);
+
+            memeAuthorImageView = view.findViewById(R.id.meme_author_image);
+            memeAuthorTextView = view.findViewById(R.id.meme_author_text);
 
             memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
             memeImageView = (ImageView) view.findViewById(R.id.meme_image);
@@ -147,6 +160,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                 return map;
                             }
                         };
+                        request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
 
                         VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
@@ -167,7 +181,20 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                 memes.add(meme);
                             }
                             totalMemesLoaded += memes.size();
+
+                            int size = MemeAdapter.this.memes.size();
                             MemeAdapter.this.memes.addAll(memes);
+                            recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
+
+                            {
+                                JsonNode usernames = node.get("usernames");
+                                Iterator<Map.Entry<String, JsonNode>> fields = usernames.fields();
+                                while (fields.hasNext()) {
+                                    Map.Entry<String, JsonNode> value = fields.next();
+                                    userIdsToUsernames.put(value.getKey(), value.getValue().textValue());
+                                }
+                            }
+
                             publishProgress(memes);
                         }
                     }
@@ -185,9 +212,6 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
         @Override
         protected void onProgressUpdate(ArrayList<Meme>[] values) {
-            int size = memes.size();
-            recyclerView.post(() -> notifyItemRangeInserted(size, values[0].size()));
-            this.cancel(true);
         }
     }
 }
