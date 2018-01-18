@@ -138,7 +138,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                             protected Map<String, String> getParams() throws AuthFailureError {
                                 HashMap<String, String> map = new HashMap<>();
                                 map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
-                                map.put("count", "30");
+                                map.put("count", String.valueOf(MEMES_IN_PAGE));
                                 if (MemeAdapter.this.memes.size() != 0)
                                     map.put("last", MemeAdapter.this.memes.get(MemeAdapter.this.memes.size() - 1).getId().toHexString());
                                 else
@@ -172,13 +172,13 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                         }
                     }
                 } catch (InterruptedException | IOException | ExecutionException e) {
-                    Log.e(MemeAdapter.class.getName(), "siriusmeme", e);
+                    Log.v(MemeAdapter.class.getName(), "siriusmeme", e);
                 }
 
                 try {
-                    Thread.sleep(400);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e(MemeAdapter.class.getName(), "siriusmeme", e);
                 }
             }
         }
