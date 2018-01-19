@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MeMe2.iml" filepath="$PROJECT_DIR$/MeMe2.iml" />
-      <module fileurl="file://C:\Users\User\Desktop\Projects\toApp\.idea\MeMe2.iml" filepath="C:\Users\User\Desktop\Projects\toApp\.idea\MeMe2.iml" />
-      <module fileurl="file://C:\Users\User\Desktop\Projects\toApp\MeMe2.iml" filepath="C:\Users\User\Desktop\Projects\toApp\MeMe2.iml" />
       <module fileurl="file://C:\Users\User\git_repo\MeMe777\MeMe2.iml" filepath="C:\Users\User\git_repo\MeMe777\MeMe2.iml" />
+      <module fileurl="file://C:\Users\User\Desktop\Projects\toApp\MeMe2.iml" filepath="C:\Users\User\Desktop\Projects\toApp\MeMe2.iml" />
+      <module fileurl="file://C:\Users\User\Desktop\Projects\toApp\.idea\MeMe2.iml" filepath="C:\Users\User\Desktop\Projects\toApp\.idea\MeMe2.iml" />
       <module fileurl="file://$PROJECT_DIR$/MeMe777.iml" filepath="$PROJECT_DIR$/MeMe777.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:\Users\User\git_repo\MeMe777\app\app.iml" filepath="C:\Users\User\git_repo\MeMe777\app\app.iml" />
       <module fileurl="file://C:\Users\User\Desktop\Projects\toApp\app\app.iml" filepath="C:\Users\User\Desktop\Projects\toApp\app\app.iml" />
       <module fileurl="file://C:\Users\User\git_repo\MeMe777\toApp.iml" filepath="C:\Users\User\git_repo\MeMe777\toApp.iml" />
     </modules>
