@@ -99,6 +99,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {}  // Shedever desaina
+
+    @Override
     public void onStart() {
         super.onStart();
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);

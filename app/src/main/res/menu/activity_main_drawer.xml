@@ -9,12 +9,11 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="Upload meme" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/settings"
             android:icon="@drawable/ic_menu_manage"
             android:title="Settings" />
         <item
             android:id="@+id/logout_btn"
-            android:layout_align_parrentBottom="true"
             android:title="Logout" />
     </group>
 
