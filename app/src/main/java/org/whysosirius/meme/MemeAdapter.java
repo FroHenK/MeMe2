@@ -1,6 +1,7 @@
 package org.whysosirius.meme;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,6 +31,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static org.whysosirius.meme.MainActivity.APP_PREFERENCES;
+
 public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewHolder> implements RecyclerViewContainer {
     protected ArrayList<Meme> memes;
     protected Context context;
@@ -44,7 +47,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     protected static final int MEMES_IN_PAGE = 30;
     protected static final int TRIGGER_MEME = 10;//must be lesser than MEMES_IN_PAGE and greater than zero, otherwise -> butthurt
     private MemeFetcher memeFetcher;
-
+    SharedPreferences sharedPreferences;
 
     public MemeAdapter(Context context, ArrayList<Meme> memes) {
         this.memes = memes;
@@ -53,6 +56,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         totalMemesLoaded = memes.size();
         memeTotalPositionMap = new HashMap<>();
         userIdsToUsernames = new HashMap<>();
+        sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
     }
 
     public MemeAdapter(Context context, String url) {
@@ -144,58 +148,58 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             while (true) {//FIXME endless loop
                 try {
                     if (TRIGGER_MEME + maxLoadedPosition - totalMemesLoaded >= 0) {
-                        Log.i("siriusmeme", "started load" + strings[0]);
-                        RequestFuture<String> future = RequestFuture.newFuture();
-                        StringRequest request = new StringRequest(Request.Method.POST, strings[0], future, future) {
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                HashMap<String, String> map = new HashMap<>();
-                                map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
-                                map.put("count", String.valueOf(MEMES_IN_PAGE));
-                                if (MemeAdapter.this.memes.size() != 0)
-                                    map.put("last", MemeAdapter.this.memes.get(MemeAdapter.this.memes.size() - 1).getId().toHexString());
-                                else
-                                    map.put("last", "null");
+                        if (sharedPreferences.contains("auth_token")) {
+                            Log.i("siriusmeme", "started load" + strings[0]);
+                            RequestFuture<String> future = RequestFuture.newFuture();
+                            StringRequest request = new StringRequest(Request.Method.POST, strings[0], future, future) {
+                                @Override
+                                protected Map<String, String> getParams() throws AuthFailureError {
+                                    HashMap<String, String> map = new HashMap<>();
+                                    map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
+                                    map.put("count", String.valueOf(MEMES_IN_PAGE));
+                                    if (MemeAdapter.this.memes.size() != 0)
+                                        map.put("last", MemeAdapter.this.memes.get(MemeAdapter.this.memes.size() - 1).getId().toHexString());
+                                    else
+                                        map.put("last", "null");
 
-                                return map;
-                            }
-                        };
-                        request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-
-                        VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
-                        String response = future.get();
-                        Log.i("siriusmeme", response);
-
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
-                        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-
-                        JsonNode node = objectMapper.readTree(response);
-
-                        if (node.get("status").asText().equals("success")) {
-                            JsonNode memesNode = node.get("links");
-                            ArrayList<Meme> memes = new ArrayList<>();
-                            for (int i = 0; i < memesNode.size(); i++) {
-                                Meme meme = objectMapper.treeToValue(memesNode.get(i), Meme.class);
-                                memes.add(meme);
-                            }
-                            totalMemesLoaded += memes.size();
-
-                            int size = MemeAdapter.this.memes.size();
-                            MemeAdapter.this.memes.addAll(memes);
-                            recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
-
-                            {
-                                JsonNode usernames = node.get("usernames");
-                                Iterator<Map.Entry<String, JsonNode>> fields = usernames.fields();
-                                while (fields.hasNext()) {
-                                    Map.Entry<String, JsonNode> value = fields.next();
-                                    userIdsToUsernames.put(value.getKey(), value.getValue().textValue());
+                                    return map;
                                 }
-                            }
+                            };
+                            request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                            VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
+                            String response = future.get();
+                            Log.i("siriusmeme", response);
 
-                            publishProgress(memes);
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
+                            objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+                            JsonNode node = objectMapper.readTree(response);
+
+                            if (node.get("status").asText().equals("success")) {
+                                JsonNode memesNode = node.get("links");
+                                ArrayList<Meme> memes = new ArrayList<>();
+                                for (int i = 0; i < memesNode.size(); i++) {
+                                    Meme meme = objectMapper.treeToValue(memesNode.get(i), Meme.class);
+                                    memes.add(meme);
+                                }
+                                totalMemesLoaded += memes.size();
+
+                                int size = MemeAdapter.this.memes.size();
+                                MemeAdapter.this.memes.addAll(memes);
+                                recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
+
+                                {
+                                    JsonNode usernames = node.get("usernames");
+                                    Iterator<Map.Entry<String, JsonNode>> fields = usernames.fields();
+                                    while (fields.hasNext()) {
+                                        Map.Entry<String, JsonNode> value = fields.next();
+                                        userIdsToUsernames.put(value.getKey(), value.getValue().textValue());
+                                    }
+                                }
+
+                                publishProgress(memes);
+                            }
                         }
                     }
                 } catch (InterruptedException | IOException | ExecutionException e) {
