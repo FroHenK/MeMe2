@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1337) {
             Log.i("Login", "Success");
-            // OK login
+            TextView username = findViewById(R.id.username_menu);
+            username.setText(preferences.getString("username","anonymous"));
         }
 
     }

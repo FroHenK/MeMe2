@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         sharedPreferences = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
-        sharedPreferences.edit().clear().apply(); // TODO UBRAAAAAATTTTTT
+        //sharedPreferences.edit().clear().apply(); // TODO UBRAAAAAATTTTTT
         if (sharedPreferences.contains("auth_token"))
             finish();
     }
