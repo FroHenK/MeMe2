@@ -24,12 +24,10 @@ import com.squareup.picasso.Picasso;
 
 import org.whysosirius.meme.database.Meme;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static org.whysosirius.meme.MainActivity.APP_PREFERENCES;
 
@@ -97,6 +95,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             holder.memeTitleTextView.setText("meme #" + holder.totalPosition);
 
         holder.memeAuthorTextView.setText(userIdsToUsernames.get(meme.getAuthorId().toHexString()));
+
+        View.OnClickListener onClickListener = v -> {
+
+        };
+        holder.memeAuthorTextView.setOnClickListener(onClickListener);
+        holder.memeAuthorImageView.setOnClickListener(onClickListener);
 
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
     }
@@ -202,7 +206,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                             }
                         }
                     }
-                } catch (InterruptedException | IOException | ExecutionException e) {
+                } catch (Exception e) {
                     Log.v(MemeAdapter.class.getName(), "siriusmeme", e);
                 }
 
