@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static org.whysosirius.meme.MainActivity.APP_PREFERENCES;
+import static android.content.Context.MODE_PRIVATE;
 
 public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewHolder> implements RecyclerViewContainer {
     protected ArrayList<Meme> memes;
@@ -54,7 +54,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         totalMemesLoaded = memes.size();
         memeTotalPositionMap = new HashMap<>();
         userIdsToUsernames = new HashMap<>();
-        sharedPreferences = context.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(context.getString(R.string.siriusmeme_preferences_key), MODE_PRIVATE);
+
     }
 
     public MemeAdapter(Context context, String url) {
@@ -159,7 +160,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                 @Override
                                 protected Map<String, String> getParams() throws AuthFailureError {
                                     HashMap<String, String> map = new HashMap<>();
-                                    map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
+                                    map.put("auth_token", sharedPreferences.getString("auth_token", null));
                                     map.put("count", String.valueOf(MEMES_IN_PAGE));
                                     if (MemeAdapter.this.memes.size() != 0)
                                         map.put("last", MemeAdapter.this.memes.get(MemeAdapter.this.memes.size() - 1).getId().toHexString());

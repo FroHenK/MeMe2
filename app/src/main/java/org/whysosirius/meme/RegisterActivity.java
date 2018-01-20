@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
-import static org.whysosirius.meme.MainActivity.APP_PREFERENCES;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -17,7 +16,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         intent = getIntent();
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+        preferences  = getSharedPreferences(getString(R.string.siriusmeme_preferences_key), MODE_PRIVATE);
         setContentView(R.layout.activity_register);
         Button reg_btn = (Button) findViewById(R.id.reg_btn);
 

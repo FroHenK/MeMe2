@@ -3,13 +3,11 @@ package org.whysosirius.meme;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,25 +15,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import org.whysosirius.meme.database.Meme;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    final static String APP_PREFERENCES = "prefs";
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
     private ViewPager mViewPager;
@@ -47,10 +36,10 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        preferences = getSharedPreferences(APP_PREFERENCES, MODE_PRIVATE);
+        preferences = getSharedPreferences(getString(R.string.siriusmeme_preferences_key), MODE_PRIVATE);
 
-        firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), "https://memkekkekmem.herokuapp.com/get_new_list");
-        secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), "https://memkekkekmem.herokuapp.com/get_old_list");
+        firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), getString(R.string.get_new_list_url));
+        secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
 
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
@@ -66,8 +55,6 @@ public class MainActivity extends AppCompatActivity
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, 1337);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -85,12 +72,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1337) {
-            Log.i("Login", "Success");
-            TextView username = findViewById(R.id.username_menu);
-            username.setText(preferences.getString("username","anonymous"));
-        }
-
     }
 
     public static class PlaceholderFragment extends Fragment {
@@ -158,16 +139,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-/*    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+    /*    @Override
+        public void onBackPressed() {
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
-    }
-*/
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -204,6 +185,8 @@ public class MainActivity extends AppCompatActivity
             preferences.edit().clear().apply();
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
         return true;
     }
