@@ -53,6 +53,20 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences preferences;
 
     @Override
+    protected void onStop() {
+        firstMemeAdapter.memeFetcher.cancel(true);
+        secondMemeAdapter.memeFetcher.cancel(true);
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        firstMemeAdapter.memeFetcher.cancel(true);
+        secondMemeAdapter.memeFetcher.cancel(true);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -63,9 +77,7 @@ public class MainActivity extends AppCompatActivity
 
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
-
         setContentView(R.layout.activity_main);
-
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container);
