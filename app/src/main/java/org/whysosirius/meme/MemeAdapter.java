@@ -100,33 +100,59 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
+        if (meme.getRating() != null) {
+            holder.memeRating.setText(meme.getRating().toString());
+        } else {
+            meme.setRating(0);
+            holder.memeRating.setText("0");
+        }
         if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(1)) {
             holder.likeCheckBox.setChecked(true);
         }
         if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(-1)) {
             holder.dislikeCheckBox.setChecked(true);
         }
-        holder.likeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                holder.dislikeCheckBox.setChecked(false);
-                doLikeRequest(meme.getId(), 1);
-                memeIdsToIsLiked.put(meme.getId().toHexString(), 1);
-            } else {
-                doLikeRequest(meme.getId(), 0);
-                memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
-            }
-        });
-        holder.dislikeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                holder.likeCheckBox.setChecked(false);
-                doLikeRequest(meme.getId(), -1);
-                memeIdsToIsLiked.put(meme.getId().toHexString(), -1);
-            } else {
-                doLikeRequest(meme.getId(), 0);
-                memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
-            }
-        });
 
+        holder.likeCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox checkBox = (CheckBox) v;
+                if (checkBox.isChecked()) {
+                    holder.dislikeCheckBox.setChecked(false);
+                    doLikeRequest(meme.getId(), 1);
+                    int aa = Integer.parseInt(holder.memeRating.getText().toString());
+                    aa++;
+                    holder.memeRating.setText(aa + "");
+                    memeIdsToIsLiked.put(meme.getId().toHexString(), 1);
+                } else {
+                    doLikeRequest(meme.getId(), 0);
+                    int aa = Integer.parseInt(holder.memeRating.getText().toString());
+                    aa--;
+                    holder.memeRating.setText(aa + "");
+                    memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
+                }
+            }
+        });
+        holder.dislikeCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox checkBox = (CheckBox)v;
+                if (checkBox.isChecked()) {
+                    holder.likeCheckBox.setChecked(false);
+                    doLikeRequest(meme.getId(), -1);
+                    int aa = Integer.parseInt(holder.memeRating.getText().toString());
+                    aa--;
+                    holder.memeRating.setText(aa + "");
+                    memeIdsToIsLiked.put(meme.getId().toHexString(), -1);
+                } else {
+                    doLikeRequest(meme.getId(), 0);
+                    int aa = Integer.parseInt(holder.memeRating.getText().toString());
+                    aa++;
+                    holder.memeRating.setText(aa + "");
+                    memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
+                }
+            }
+        });
         if (!memeTotalPositionMap.containsKey(meme)) {
             memeTotalPositionMap.put(meme, totalPosition++);
         }
@@ -171,6 +197,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public class ViewHolder extends RecyclerView.ViewHolder {
         public long totalPosition;
         CheckBox likeCheckBox;
+        TextView memeRating;
         CheckBox dislikeCheckBox;
         ImageView memeAuthorImageView;
         TextView memeAuthorTextView;
@@ -183,8 +210,11 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
             memeAuthorImageView = view.findViewById(R.id.meme_author_image);
             memeAuthorTextView = view.findViewById(R.id.meme_author_text);
+
             likeCheckBox = view.findViewById(R.id.like_check_box);
             dislikeCheckBox = view.findViewById(R.id.check_box_dislike);
+
+            memeRating = view.findViewById(R.id.rating_text);
             memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
             memeImageView = (ImageView) view.findViewById(R.id.meme_image);
             totalPosition = -1;
