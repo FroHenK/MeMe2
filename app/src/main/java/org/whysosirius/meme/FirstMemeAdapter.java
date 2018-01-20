@@ -56,11 +56,11 @@ public class FirstMemeAdapter extends MemeAdapter {
 
     private void setViewedOnServer(Meme meme) {
         RequestFuture<String> future = RequestFuture.newFuture();
-        StringRequest request = new StringRequest(Request.Method.POST, "https://memkekkekmem.herokuapp.com/set_viewed", future, future) {
+        StringRequest request = new StringRequest(Request.Method.POST, context.getString(R.string.set_viewed_url), future, future) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> map = new HashMap<>();
-                map.put("auth_token", "QJZUXOcca4wKSzy0CkFUU");
+                map.put("auth_token", sharedPreferences.getString("auth_token", null));
                 map.put("meme_id", meme.getId().toHexString());
                 return map;
             }
