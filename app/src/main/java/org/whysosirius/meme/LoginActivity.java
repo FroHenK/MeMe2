@@ -131,6 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
+                return;
             }
 
             String message = node.get("message").asText();
@@ -138,14 +139,17 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
+                return;
             }
             if (status.equals("fail") && message.equals("username_invalid")) {
                 usernameText.setError("Username is invalid");
                 usernameText.requestFocus();
+                return;
             }
             if (status.equals("fail") && message.equals("username_is_occupied")) {
                 usernameText.setError("Username is occupied");
                 usernameText.requestFocus();
+                return;
             }
             throw new IOException("error while setting username");
         } catch (IOException e) {
