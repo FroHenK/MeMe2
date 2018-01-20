@@ -1,8 +1,13 @@
 package org.whysosirius.meme;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,16 +20,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static final int RC_GET_MEME_IMAGE = 420;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
     private ViewPager mViewPager;
@@ -72,21 +92,49 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_GET_MEME_IMAGE && resultCode == RESULT_OK) {
+            Uri selectedImage = data.getData();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            LayoutInflater inflater = getLayoutInflater();
+            View view = inflater.inflate(R.layout.dialog_upload_meme, null);
+            builder.setView(view);
+            AlertDialog alertDialog = builder.create();
+            ImageView memeImageView = view.findViewById(R.id.upload_meme_image_view);
+            memeImageView.setImageURI(selectedImage);
+            CheckBox checkBox = findViewById(R.id.memeUploadCheckBox);
+            EditText titleEditText = view.findViewById(R.id.upload_meme_title_edit_text);
+            FloatingActionButton sendButton = view.findViewById(R.id.sendFloatingActionButton);
+            ImageButton cancelButton = view.findViewById(R.id.cancelImageButton);
+            cancelButton.setOnClickListener(v -> alertDialog.cancel());
+
+            sendButton.setOnClickListener(v -> {
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                    uploadBitmap(bitmap, titleEditText.getText().toString(), checkBox.isChecked());
+                    alertDialog.dismiss();
+                } catch (IOException e) {
+                    Log.e("siriusmeme", "omg no", e);
+                }
+            });
+
+            alertDialog.show();
+        }
     }
 
     public static class PlaceholderFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER = "section_number";
-        private RecyclerView.Adapter adapter;
+        private MemeAdapter adapter;
 
         public PlaceholderFragment() {
         }
 
-        public void setAdapter(RecyclerView.Adapter adapter) {
+        public void setAdapter(MemeAdapter adapter) {
             this.adapter = adapter;
         }
 
-        public static PlaceholderFragment newInstance(int sectionNumber, RecyclerView.Adapter adapter) {
+        public static PlaceholderFragment newInstance(int sectionNumber, MemeAdapter adapter) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             fragment.setAdapter(adapter);
 
@@ -106,7 +154,6 @@ public class MainActivity extends AppCompatActivity
 
             RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
-
 
             recyclerView.setAdapter(adapter);
 
@@ -139,16 +186,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*    @Override
-        public void onBackPressed() {
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-            if (drawer.isDrawerOpen(GravityCompat.START)) {
-                drawer.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        }
-    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -156,20 +193,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-      return super.onOptionsItemSelected(item);
-    }
-*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -178,7 +201,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.add_mem) {
-            // Handle add meme action
+
+            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickPhoto, RC_GET_MEME_IMAGE);//one can be replaced with any action code
+
         } else if (id == R.id.settings) {
             // Settings activity
         } else if (id == R.id.logout_btn) {
@@ -190,4 +217,40 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+
+    private void uploadBitmap(final Bitmap bitmap, String title, boolean isAmoral) {
+
+
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, getString(R.string.upload_meme_url), null, null) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("auth_token", preferences.getString("auth_token", null));
+                params.put("title", title);
+                params.put("is_amoral", isAmoral ? "true" : "false");
+                return params;
+            }
+
+            /*
+            * Here we are passing image by renaming it with a unique name
+            * */
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("file", new DataPart(imagename + "", getFileDataFromDrawable(bitmap)));
+                return params;
+            }
+        };
+        volleyMultipartRequest.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(this.getApplicationContext()).add(volleyMultipartRequest);
+    }
+
+    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+
 }

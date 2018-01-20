@@ -94,4 +94,5 @@
     <string name="get_auth_token_url">&url;get_auth_token</string>
     <string name="set_viewed_url">&url;set_viewed</string>
     <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
+    <string name="upload_meme_url">https://memkekkekmem.herokuapp.com/upload_meme</string>
 </resources>
