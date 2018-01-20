@@ -1,7 +1,6 @@
 package org.whysosirius.meme;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +41,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     private HashMap<Meme, Integer> memeTotalPositionMap;
     protected HashMap<String, String> userIdsToUsernames;
     protected HashMap<String, Integer> memeIdsToIsLiked;
+
     protected int totalPosition;
     protected long maxLoadedPosition;
     protected long totalMemesLoaded;
@@ -60,6 +59,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         userIdsToUsernames = new HashMap<>();
         sharedPreferences = context.getSharedPreferences(context.getString(R.string.siriusmeme_preferences_key), MODE_PRIVATE);
 
+        memeIdsToIsLiked = new HashMap<>();
     }
 
     public MemeAdapter(Context context, String url) {
@@ -81,38 +81,49 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.meme_layout, parent, false);
         return new ViewHolder(view);
     }
-    private void doLikeRequest(ObjectId id, Integer type){
-        // TODO Request
+
+    private void doLikeRequest(ObjectId id, Integer type) {
+        StringRequest request = new StringRequest(Request.Method.POST, "https://memkekkekmem.herokuapp.com/rate_meme", null, null) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("auth_token", sharedPreferences.getString("auth_token", null));
+                map.put("meme_id", id.toHexString());
+                map.put("new_value", String.valueOf(type));
+                return map;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
     }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
-        if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(new Integer(1))){
+        if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(1)) {
             holder.likeCheckBox.setChecked(true);
         }
-        if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(new Integer(-1))){
+        if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(-1)) {
             holder.dislikeCheckBox.setChecked(true);
         }
-        holder.likeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    holder.dislikeCheckBox.setChecked(false);
-                    doLikeRequest(meme.getId(), 1);
-                }else{
-                    doLikeRequest(meme.getId(), 0);
-                }
+        holder.likeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                holder.dislikeCheckBox.setChecked(false);
+                doLikeRequest(meme.getId(), 1);
+                memeIdsToIsLiked.put(meme.getId().toHexString(), 1);
+            } else {
+                doLikeRequest(meme.getId(), 0);
+                memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
             }
         });
-        holder.dislikeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    holder.likeCheckBox.setChecked(false);
-                    doLikeRequest(meme.getId(), -1);
-                }else{
-                    doLikeRequest(meme.getId(), 0);
-                }
+        holder.dislikeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                holder.likeCheckBox.setChecked(false);
+                doLikeRequest(meme.getId(), -1);
+                memeIdsToIsLiked.put(meme.getId().toHexString(), -1);
+            } else {
+                doLikeRequest(meme.getId(), 0);
+                memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
             }
         });
 
@@ -160,7 +171,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public class ViewHolder extends RecyclerView.ViewHolder {
         public long totalPosition;
         CheckBox likeCheckBox;
-        CheckBox  dislikeCheckBox;
+        CheckBox dislikeCheckBox;
         ImageView memeAuthorImageView;
         TextView memeAuthorTextView;
 
@@ -235,6 +246,15 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                     while (fields.hasNext()) {
                                         Map.Entry<String, JsonNode> value = fields.next();
                                         userIdsToUsernames.put(value.getKey(), value.getValue().textValue());
+                                    }
+                                }
+
+                                {
+                                    JsonNode likes = node.get("likes");
+                                    Iterator<Map.Entry<String, JsonNode>> fields = likes.fields();
+                                    while (fields.hasNext()) {
+                                        Map.Entry<String, JsonNode> value = fields.next();
+                                        memeIdsToIsLiked.put(value.getKey(), value.getValue().intValue());
                                     }
                                 }
 
