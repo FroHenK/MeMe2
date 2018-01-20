@@ -70,7 +70,6 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             notifyItemInserted(0);
             recyclerView.scrollToPosition(0);
         });
-
     }
 
     @Override
