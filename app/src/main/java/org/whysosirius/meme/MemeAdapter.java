@@ -1,6 +1,7 @@
 package org.whysosirius.meme;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.picasso.Picasso;
 
+import org.bson.types.ObjectId;
 import org.whysosirius.meme.database.Meme;
 
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
     private HashMap<Meme, Integer> memeTotalPositionMap;
     protected HashMap<String, String> userIdsToUsernames;
-
+    protected HashMap<String, Integer> memeIdsToIsLiked;
     protected int totalPosition;
     protected long maxLoadedPosition;
     protected long totalMemesLoaded;
@@ -79,18 +81,41 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.meme_layout, parent, false);
         return new ViewHolder(view);
     }
-
+    private void doLikeRequest(ObjectId id, Integer type){
+        // TODO Request
+    }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
+        if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(new Integer(1))){
+            holder.likeCheckBox.setChecked(true);
+        }
+        if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(new Integer(-1))){
+            holder.dislikeCheckBox.setChecked(true);
+        }
         holder.likeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-
+                    holder.dislikeCheckBox.setChecked(false);
+                    doLikeRequest(meme.getId(), 1);
+                }else{
+                    doLikeRequest(meme.getId(), 0);
                 }
             }
         });
+        holder.dislikeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    holder.likeCheckBox.setChecked(false);
+                    doLikeRequest(meme.getId(), -1);
+                }else{
+                    doLikeRequest(meme.getId(), 0);
+                }
+            }
+        });
+
         if (!memeTotalPositionMap.containsKey(meme)) {
             memeTotalPositionMap.put(meme, totalPosition++);
         }
