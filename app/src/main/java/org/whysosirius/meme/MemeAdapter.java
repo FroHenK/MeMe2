@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -81,7 +83,14 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
+        holder.likeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
 
+                }
+            }
+        });
         if (!memeTotalPositionMap.containsKey(meme)) {
             memeTotalPositionMap.put(meme, totalPosition++);
         }
@@ -125,7 +134,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public long totalPosition;
-
+        CheckBox likeCheckBox;
+        CheckBox  dislikeCheckBox;
         ImageView memeAuthorImageView;
         TextView memeAuthorTextView;
 
@@ -137,7 +147,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
             memeAuthorImageView = view.findViewById(R.id.meme_author_image);
             memeAuthorTextView = view.findViewById(R.id.meme_author_text);
-
+            likeCheckBox = view.findViewById(R.id.like_check_box);
+            dislikeCheckBox = view.findViewById(R.id.check_box_dislike);
             memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
             memeImageView = (ImageView) view.findViewById(R.id.meme_image);
             totalPosition = -1;
