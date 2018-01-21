@@ -4,9 +4,10 @@ import org.bson.BsonTimestamp;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class Meme extends Documentable {
+public class Meme extends Documentable implements Serializable {
     private String url;
     private Long time;
     private String authorId;

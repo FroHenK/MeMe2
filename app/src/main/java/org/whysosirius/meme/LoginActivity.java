@@ -129,7 +129,9 @@ public class LoginActivity extends AppCompatActivity {
 
             if (status.equals("success")) {
                 Intent intent = new Intent(this, MainActivity.class);
+                showProgress(false, loginForm);
                 startActivity(intent);
+                showProgress(false, loginForm);
                 finish();
                 return;
             }
@@ -138,6 +140,7 @@ public class LoginActivity extends AppCompatActivity {
             if ((status.equals("fail") && message.equals("username_already_set"))) {
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
+                showProgress(false, loginForm);
                 finish();
                 return;
             }
@@ -161,7 +164,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @SuppressLint("ApplySharedPref")
     private void onGetAuthTokenResponse(String response) {
-        showProgress(false, loginForm);
         Log.i("siriusmeme", "response from get_auth_token: " + response);
 
         Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
@@ -186,7 +188,6 @@ public class LoginActivity extends AppCompatActivity {
         StringRequest request = new StringRequest(Request.Method.POST, validateSessionHost, this::onValidateSessionResponse, error -> {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), "Error while trying to communicate with server", Snackbar.LENGTH_LONG);
             snackbar.show();
-            showProgress(false, loginForm);
             Log.e("siriusmeme", "error while trying to communicate with server", error.getCause());
         }) {
             @Override
@@ -249,7 +250,7 @@ public class LoginActivity extends AppCompatActivity {
                         StringRequest request = new StringRequest(Request.Method.POST, getAuthTokenHost, this::onGetAuthTokenResponse, error -> {
                             Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), "Error while trying to communicate with server", Snackbar.LENGTH_LONG);
                             snackbar.show();
-                            showProgress(false, loginForm);
+
                             Log.e("siriusmeme", "error while trying to communicate with server", error.getCause());
                         }) {
                             @Override

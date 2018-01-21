@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity
         firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), getString(R.string.get_new_list_url));
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
         thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
+
         thirdMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
@@ -252,6 +253,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.settings) {
             // Settings activity
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.logout_btn) {
             preferences.edit().clear().apply();
             FirebaseAuth.getInstance().signOut();
