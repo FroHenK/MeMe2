@@ -9,11 +9,11 @@ android {
             storePassword 'lollol123'
         }
     }
-    compileSdkVersion 27
+    compileSdkVersion 26
     defaultConfig {
         applicationId "org.whysosirius.meme"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -60,9 +60,7 @@ dependencies {
     implementation 'org.mongodb:bson:3.6.1'
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.8.2'
-
     implementation 'com.android.volley:volley:1.1.0'
-
     implementation 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     implementation 'com.github.chrisbanes:PhotoView:2.1.3'

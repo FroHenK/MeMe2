@@ -126,9 +126,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             public void onClick(View v) {
                 CheckBox checkBox = (CheckBox) v;
                 if (checkBox.isChecked()) {
+                    int aa = 0;
+                    if (holder.dislikeCheckBox.isChecked())
+                       aa++;
                     holder.dislikeCheckBox.setChecked(false);
                     doLikeRequest(meme.getId(), 1);
-                    int aa = Integer.parseInt(holder.memeRating.getText().toString());
+                    aa += Integer.parseInt(holder.memeRating.getText().toString());
                     aa++;
                     holder.memeRating.setText(aa + "");
                     memeIdsToIsLiked.put(meme.getId().toHexString(), 1);
@@ -146,9 +149,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             public void onClick(View v) {
                 CheckBox checkBox = (CheckBox) v;
                 if (checkBox.isChecked()) {
+                    int aa = 0;
+                    if (holder.likeCheckBox.isChecked())
+                        aa--;
                     holder.likeCheckBox.setChecked(false);
                     doLikeRequest(meme.getId(), -1);
-                    int aa = Integer.parseInt(holder.memeRating.getText().toString());
+                    aa += Integer.parseInt(holder.memeRating.getText().toString());
                     aa--;
                     holder.memeRating.setText(aa + "");
                     memeIdsToIsLiked.put(meme.getId().toHexString(), -1);
