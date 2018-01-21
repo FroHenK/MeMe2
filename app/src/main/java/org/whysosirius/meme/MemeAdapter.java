@@ -1,8 +1,15 @@
 package org.whysosirius.meme;
 
+import android.app.job.JobParameters;
+import android.app.job.JobService;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +33,7 @@ import com.squareup.picasso.Picasso;
 import org.bson.types.ObjectId;
 import org.whysosirius.meme.database.Meme;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,10 +55,10 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     protected long totalMemesLoaded;
     protected static final int MEMES_IN_PAGE = 30;
     protected static final int TRIGGER_MEME = 10;//must be lesser than MEMES_IN_PAGE and greater than zero, otherwise -> butthurt
-    private MemeFetcher memeFetcher;
+    public MemeFetcher memeFetcher;
     SharedPreferences sharedPreferences;
 
-    public MemeAdapter(Context context, ArrayList<Meme> memes) {
+    MemeAdapter(Context context, ArrayList<Meme> memes) {
         this.memes = memes;
         this.context = context;
         totalPosition = 0;
@@ -62,7 +70,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         memeIdsToIsLiked = new HashMap<>();
     }
 
-    public MemeAdapter(Context context, String url) {
+    MemeAdapter(Context context, String url) {
         this(context, new ArrayList<>());
         memeFetcher = new MemeFetcher();
         memeFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);//start meme fetcher service (AsyncTask)
@@ -136,7 +144,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         holder.dislikeCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox checkBox = (CheckBox)v;
+                CheckBox checkBox = (CheckBox) v;
                 if (checkBox.isChecked()) {
                     holder.likeCheckBox.setChecked(false);
                     doLikeRequest(meme.getId(), -1);
@@ -151,6 +159,14 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                     holder.memeRating.setText(aa + "");
                     memeIdsToIsLiked.put(meme.getId().toHexString(), 0);
                 }
+            }
+        });
+        holder.memeImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, FullscreenActivity.class);
+                intent.putExtra("url", meme.getUrl());
+                context.startActivity(intent);
             }
         });
         if (!memeTotalPositionMap.containsKey(meme)) {
@@ -220,13 +236,25 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             totalPosition = -1;
         }
     }
+    public class MemeFetcherTask extends AsyncTaskLoader<String>{
 
+        public MemeFetcherTask(@NonNull Context context) {
+            super(context);
+        }
 
+        @Nullable
+        @Override
+        public String loadInBackground() {
+            return null;
+        }
+
+    }
     protected class MemeFetcher extends AsyncTask<String, ArrayList<Meme>, Void> {
-
         @Override
         protected Void doInBackground(String... strings) {
             while (true) {//FIXME endless loop
+                if (isCancelled())
+                    return null;
                 try {
                     if (TRIGGER_MEME + maxLoadedPosition - totalMemesLoaded >= 0) {
                         if (sharedPreferences.contains("auth_token")) {
@@ -265,7 +293,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                     memes.add(meme);
                                 }
                                 totalMemesLoaded += memes.size();
-
+                                if (isCancelled())
+                                    return null;
                                 int size = MemeAdapter.this.memes.size();
                                 MemeAdapter.this.memes.addAll(memes);
                                 recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
