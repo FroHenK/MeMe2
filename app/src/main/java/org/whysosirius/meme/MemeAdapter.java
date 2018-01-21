@@ -1,20 +1,28 @@
 package org.whysosirius.meme;
 
+import android.app.Activity;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,15 +37,19 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.bson.types.ObjectId;
 import org.whysosirius.meme.database.Meme;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -105,6 +117,15 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
     }
 
+    public static String generateString(Random rng, String characters, int length)
+    {
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            text[i] = characters.charAt(rng.nextInt(characters.length()));
+        }
+        return new String(text);
+    }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
@@ -120,7 +141,58 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         if (memeIdsToIsLiked.get(meme.getId().toHexString()).equals(-1)) {
             holder.dislikeCheckBox.setChecked(true);
         }
+        holder.shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Picasso.with(MemeAdapter.this.context).load(meme.getUrl()).into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                                File folder = new File(sd, "/Picasso/");
+                                if (!folder.exists())
+                                    folder.mkdir();
+                                String name = generateString(new Random(1488), "ABCDEFGERqwertyuio", 10) + ".jpg";
+                                File pic = new File(folder, name);
+                                if (!pic.exists())
+                                    try {
+                                        pic.createNewFile();
+                                    } catch (IOException e) {
+                                        Log.e("Sosality", "New reality");
+                                        //e.printStackTrace();
+                                    }
+                                try {
+                                    FileOutputStream outputStream = new FileOutputStream(String.valueOf(pic));
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                                    outputStream.close();
+                                }catch (IOException exception){
+                                    Log.e("Zapic error", name);
+                                }
+                                Intent share = new Intent(Intent.ACTION_SEND);
+                                share.setType("image/*");
+                                Uri uri = FileProvider.getUriForFile(context, "com.sochisirius.fileprovider", pic);
+                                share.putExtra(Intent.EXTRA_STREAM, uri);
+                                share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                view.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        context.startActivity(share);
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
 
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {}
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) {}
+                });
+            }
+        });
         holder.likeCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,6 +291,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public class ViewHolder extends RecyclerView.ViewHolder {
         public long totalPosition;
         CheckBox likeCheckBox;
+        Button shareButton;
         TextView memeRating;
         CheckBox dislikeCheckBox;
         ImageView memeAuthorImageView;
@@ -232,6 +305,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
             memeAuthorImageView = view.findViewById(R.id.meme_author_image);
             memeAuthorTextView = view.findViewById(R.id.meme_author_text);
+            shareButton = view.findViewById(R.id.share);
 
             likeCheckBox = view.findViewById(R.id.like_check_box);
             dislikeCheckBox = view.findViewById(R.id.check_box_dislike);
