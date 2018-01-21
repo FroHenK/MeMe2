@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private FirstMemeAdapter firstMemeAdapter;
     private SecondMemeAdapter secondMemeAdapter;
+    private ThirdMemeAdapter thirdMemeAdapter;
     private SharedPreferences preferences;
 
     @Override
@@ -99,7 +100,8 @@ public class MainActivity extends AppCompatActivity
 
         firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), getString(R.string.get_new_list_url));
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
-
+        thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
+        thirdMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
         setContentView(R.layout.activity_main);
@@ -214,13 +216,17 @@ public class MainActivity extends AppCompatActivity
             if (position == 0)
                 return PlaceholderFragment.newInstance(position + 1, firstMemeAdapter);
             else
+            if (position == 1)
                 return PlaceholderFragment.newInstance(position + 1, secondMemeAdapter);
+            else
+                return PlaceholderFragment.newInstance(position + 1, thirdMemeAdapter);
+
         }
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 3 total pages.
+            return 3;
         }
     }
 

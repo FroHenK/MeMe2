@@ -3,10 +3,6 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'kekmaster'
-            keyPassword 'lollol123'
-            storeFile file('/home/frohenk/Documents/kekmaster.jks')
-            storePassword 'lollol123'
         }
     }
     compileSdkVersion 26

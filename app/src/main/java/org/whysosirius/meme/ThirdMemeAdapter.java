@@ -15,17 +15,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Created by User on 21.01.2018.
+ */
 
-public class FirstMemeAdapter extends MemeAdapter {
+public class ThirdMemeAdapter extends MemeAdapter {
 
     private SecondMemeAdapter secondMemeAdapter;
 
     @SuppressLint("UseSparseArrays")
-    public FirstMemeAdapter(Context context, ArrayList<Meme> memes) {
+    public ThirdMemeAdapter(Context context, ArrayList<Meme> memes) {
         super(context, memes);
     }
 
-    public FirstMemeAdapter(Context context, String url) {
+    public ThirdMemeAdapter(Context context, String url) {
         super(context, url);
     }
 
@@ -65,6 +68,7 @@ public class FirstMemeAdapter extends MemeAdapter {
                 return map;
             }
         };
+
 
         VolleySingleton.getInstance(this.context).addToRequestQueue(request);
     }

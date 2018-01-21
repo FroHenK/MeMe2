@@ -1,6 +1,6 @@
 <!DOCTYPE resources [<!ENTITY url "https://memkekkekmem.herokuapp.com/">]>
 <resources>
-    <string name="app_name">MeMe</string>
+    <string name="app_name">Memography</string>
     <string name="tab_text_1">Непросмотренные</string>
     <string name="tab_text_2">Просмотренные</string>
     <string name="tab_text_3">Tab 3</string>
@@ -93,6 +93,7 @@
     <string name="set_username_url">&url;set_username</string>
     <string name="get_auth_token_url">&url;get_auth_token</string>
     <string name="set_viewed_url">&url;set_viewed</string>
+    <string name="get_rated_list_url">&url;get_rated_list</string>
     <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
     <string name="upload_meme_url">https://memkekkekmem.herokuapp.com/upload_meme</string>
 
