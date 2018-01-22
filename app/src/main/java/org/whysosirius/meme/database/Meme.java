@@ -14,7 +14,7 @@ public class Meme extends Documentable implements Serializable {
     private String id;
     private String title;
     private Integer rating;
-
+    public Boolean isAmoral;
 
     public ObjectId getId() {
         return toObjectId(id);
