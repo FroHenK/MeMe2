@@ -14,7 +14,16 @@ public class Meme extends Documentable implements Serializable {
     private String id;
     private String title;
     private Integer rating;
-    public Boolean isAmoral;
+    private Boolean isAmoral;
+
+    public Boolean getAmoral() {
+        return isAmoral;
+    }
+
+    public Meme setAmoral(Boolean amoral) {
+        isAmoral = amoral;
+        return this;
+    }
 
     public ObjectId getId() {
         return toObjectId(id);
