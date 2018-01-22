@@ -174,7 +174,8 @@ public class LoginActivity extends AppCompatActivity {
             if (!node.get("status").asText().equals("success"))
                 throw new IOException("unsuccessful operation");
             String authToken = node.get("auth_token").asText();
-            preferences.edit().putString("auth_token", authToken).commit();
+            String username = node.get("username").asText();
+            preferences.edit().putString("auth_token", authToken).putString("username", username).commit();
             onAuthTokenReception(authToken);
         } catch (IOException e) {
             Log.e("siriusmeme", "error reading json", e);

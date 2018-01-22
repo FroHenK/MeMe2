@@ -1,6 +1,7 @@
 package org.whysosirius.meme;
 
 import android.content.Context;
+import android.view.View;
 
 import org.whysosirius.meme.database.Meme;
 
@@ -9,6 +10,8 @@ import java.util.List;
 
 public class SecondMemeAdapter extends MemeAdapter {
 
+
+    public View rootView;
     public SecondMemeAdapter(Context context, List<Meme> memes) {
         super(context, memes);
     }

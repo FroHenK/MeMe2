@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
         thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
 
+
         thirdMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
@@ -128,6 +131,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
+        textView.setText(preferences.getString("username",""));
         verifyStoragePermissions(this);
     }
 
@@ -203,7 +208,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
