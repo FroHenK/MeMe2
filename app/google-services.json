@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "361437825347-bnvke87mesvmjoumum6kkbr2vona2c1a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.whysosirius.meme",
+            "certificate_hash": "91555a35f1ca7d4fa7d110ec42cd8d1be95f4fcb"
+          }
+        },
+        {
           "client_id": "361437825347-029lk3cc8hl6m4q4908fqb1c5mf97sgc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
