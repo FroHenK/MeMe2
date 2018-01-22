@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -46,7 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
     public static final int RC_GET_MEME_IMAGE = 420;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
@@ -56,17 +58,18 @@ public class MainActivity extends AppCompatActivity
     private ThirdMemeAdapter thirdMemeAdapter;
     private SharedPreferences preferences;
 
+
     @Override
     protected void onStop() {
-        firstMemeAdapter.memeFetcher.cancel(true);
-        secondMemeAdapter.memeFetcher.cancel(true);
+        //firstMemeAdapter.memeFetcher.cancel(true);
+        //secondMemeAdapter.memeFetcher.cancel(true);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        firstMemeAdapter.memeFetcher.cancel(true);
-        secondMemeAdapter.memeFetcher.cancel(true);
+        //firstMemeAdapter.memeFetcher.cancel(true);
+        //secondMemeAdapter.memeFetcher.cancel(true);
         super.onDestroy();
     }
 
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
         thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
 
+
         thirdMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
@@ -128,6 +132,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
+        textView.setText(preferences.getString("username", ""));
         verifyStoragePermissions(this);
     }
 
@@ -166,6 +172,19 @@ public class MainActivity extends AppCompatActivity
 
     public static class PlaceholderFragment extends Fragment {
 
+        @Override
+        public void onResume() {
+            super.onResume();
+//            if (adapter.memeFetcher != null && !adapter.memeFetcher.isCancelled())
+//                adapter.startKek();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+//            adapter.memeFetcher.cancel(true);
+        }
+
         private static final String ARG_SECTION_NUMBER = "section_number";
         private MemeAdapter adapter;
 
@@ -203,7 +222,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
