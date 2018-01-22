@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity
             AlertDialog alertDialog = builder.create();
             ImageView memeImageView = view.findViewById(R.id.upload_meme_image_view);
             memeImageView.setImageURI(selectedImage);
-            CheckBox checkBox = findViewById(R.id.memeUploadCheckBox);
+            CheckBox checkBox = view.findViewById(R.id.memeUploadCheckBox);
             EditText titleEditText = view.findViewById(R.id.upload_meme_title_edit_text);
             FloatingActionButton sendButton = view.findViewById(R.id.sendFloatingActionButton);
             ImageButton cancelButton = view.findViewById(R.id.cancelImageButton);
