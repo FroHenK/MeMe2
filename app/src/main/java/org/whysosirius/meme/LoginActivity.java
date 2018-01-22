@@ -145,12 +145,12 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
             if (status.equals("fail") && message.equals("username_invalid")) {
-                usernameText.setError("Username is invalid");
+                usernameText.setError("Пожалуйста, используйте только символы латинского алфавита, цифры и _");
                 usernameText.requestFocus();
                 return;
             }
             if (status.equals("fail") && message.equals("username_is_occupied")) {
-                usernameText.setError("Username is occupied");
+                usernameText.setError("Ник уже занят");
                 usernameText.requestFocus();
                 return;
             }
