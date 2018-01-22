@@ -60,7 +60,7 @@
                     style="@style/TabAppTheme"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Лучшее" />
+                    android:text="@string/tab_text_3" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabItem2"
