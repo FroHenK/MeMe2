@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener{
     public static final int RC_GET_MEME_IMAGE = 420;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity
 
             if (position == 0)
                 return PlaceholderFragment.newInstance(position + 1, firstMemeAdapter);
-            else if (position == 1)
+            else if (position == 2)
                 return PlaceholderFragment.newInstance(position + 1, secondMemeAdapter);
             else
                 return PlaceholderFragment.newInstance(position + 1, thirdMemeAdapter);
@@ -251,10 +251,6 @@ public class MainActivity extends AppCompatActivity
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(pickPhoto, RC_GET_MEME_IMAGE);//one can be replaced with any action code
 
-        } else if (id == R.id.settings) {
-            // Settings activity
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
         } else if (id == R.id.logout_btn) {
             preferences.edit().clear().apply();
             FirebaseAuth.getInstance().signOut();

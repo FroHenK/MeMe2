@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+        <item android:id="@+id/MainPage"
+              android:title="Memes feed"
+              android:checked="true"
+            />
         <item
             android:id="@+id/add_mem"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Upload meme" />
         <item
-            android:id="@+id/settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
+            android:id="@+id/app_bar_switch"
+            android:title="Show amoral"
+            android:checkable="false"
+            app:actionLayout="@layout/switch_item" />
         <item
             android:id="@+id/logout_btn"
             android:title="Logout" />
     </group>
+
 
 </menu>
