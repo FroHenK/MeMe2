@@ -49,7 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
     public static final int RC_GET_MEME_IMAGE = 420;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
@@ -59,17 +59,18 @@ public class MainActivity extends AppCompatActivity
     private ThirdMemeAdapter thirdMemeAdapter;
     private SharedPreferences preferences;
 
+
     @Override
     protected void onStop() {
-        firstMemeAdapter.memeFetcher.cancel(true);
-        secondMemeAdapter.memeFetcher.cancel(true);
+        //firstMemeAdapter.memeFetcher.cancel(true);
+        //secondMemeAdapter.memeFetcher.cancel(true);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        firstMemeAdapter.memeFetcher.cancel(true);
-        secondMemeAdapter.memeFetcher.cancel(true);
+        //firstMemeAdapter.memeFetcher.cancel(true);
+        //secondMemeAdapter.memeFetcher.cancel(true);
         super.onDestroy();
     }
 
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
-        textView.setText(preferences.getString("username",""));
+        textView.setText(preferences.getString("username", ""));
         verifyStoragePermissions(this);
     }
 
@@ -172,6 +173,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static class PlaceholderFragment extends Fragment {
+
+        @Override
+        public void onResume() {
+            super.onResume();
+//            if (adapter.memeFetcher != null && !adapter.memeFetcher.isCancelled())
+//                adapter.startKek();
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+//            adapter.memeFetcher.cancel(true);
+        }
 
         private static final String ARG_SECTION_NUMBER = "section_number";
         private MemeAdapter adapter;

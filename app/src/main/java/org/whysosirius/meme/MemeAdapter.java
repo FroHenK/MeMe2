@@ -65,6 +65,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     protected static final int TRIGGER_MEME = 10;//must be lesser than MEMES_IN_PAGE and greater than zero, otherwise -> butthurt
     public MemeFetcher memeFetcher;
     SharedPreferences sharedPreferences;
+    private String url;
 
     MemeAdapter(Context context, List<Meme> memes) {
         this.memes = memes;
@@ -81,7 +82,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     MemeAdapter(Context context, String url) {
         this(context, new ArrayList<>());
         memeFetcher = new MemeFetcher();
-        memeFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, url);//start meme fetcher service (AsyncTask)
+        this.url = url;
+        startKek();//start meme fetcher service (AsyncTask)
+    }
+
+    public AsyncTask<String, ArrayList<Meme>, Void> startKek() {
+        return memeFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.url);
     }
 
     public void addMemeOnTop(Meme meme) {
@@ -113,15 +119,14 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
     }
 
-    public static String generateString(Random rng, String characters, int length)
-    {
+    public static String generateString(Random rng, String characters, int length) {
         char[] text = new char[length];
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             text[i] = characters.charAt(rng.nextInt(characters.length()));
         }
         return new String(text);
     }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
@@ -163,7 +168,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                     FileOutputStream outputStream = new FileOutputStream(String.valueOf(pic));
                                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                                     outputStream.close();
-                                }catch (IOException exception){
+                                } catch (IOException exception) {
                                     Log.e("Zapic error", name);
                                 }
                                 Intent share = new Intent(Intent.ACTION_SEND);
@@ -182,10 +187,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                     }
 
                     @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {}
+                    public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    }
 
                     @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {}
+                    public void onBitmapFailed(Drawable errorDrawable) {
+                    }
                 });
             }
         });
@@ -196,7 +203,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                 if (checkBox.isChecked()) {
                     int aa = 0;
                     if (holder.dislikeCheckBox.isChecked())
-                       aa++;
+                        aa++;
                     holder.dislikeCheckBox.setChecked(false);
                     doLikeRequest(meme.getId(), 1);
                     aa += Integer.parseInt(holder.memeRating.getText().toString());
@@ -258,10 +265,16 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         holder.memeAuthorTextView.setText(userIdsToUsernames.get(meme.getAuthorId().toHexString()));
 
         View.OnClickListener onClickListener = v -> {
-
+            //todo open author's activity
         };
         holder.memeAuthorTextView.setOnClickListener(onClickListener);
         holder.memeAuthorImageView.setOnClickListener(onClickListener);
+
+        holder.commentButton.setOnClickListener(view -> {
+            Intent intent = new Intent(context, CommentsActivity.class);
+            intent.putExtra("meme_id", meme.getId().toHexString());
+            context.startActivity(intent);
+        });
 
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
     }
@@ -295,6 +308,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
         TextView memeTitleTextView;
         ImageView memeImageView;
+        Button commentButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -310,9 +324,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             memeTitleTextView = (TextView) view.findViewById(R.id.meme_title_text);
             memeImageView = (ImageView) view.findViewById(R.id.meme_image);
             totalPosition = -1;
+
+            commentButton = view.findViewById(R.id.comment);
         }
     }
-    public class MemeFetcherTask extends AsyncTaskLoader<String>{
+
+    public class MemeFetcherTask extends AsyncTaskLoader<String> {
 
         public MemeFetcherTask(@NonNull Context context) {
             super(context);
@@ -325,6 +342,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         }
 
     }
+
     protected class MemeFetcher extends AsyncTask<String, ArrayList<Meme>, Void> {
         @Override
         protected Void doInBackground(String... strings) {
@@ -413,4 +431,5 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         protected void onProgressUpdate(ArrayList<Meme>[] values) {
         }
     }
+
 }
