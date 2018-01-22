@@ -5,10 +5,11 @@ import android.content.Context;
 import org.whysosirius.meme.database.Meme;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SecondMemeAdapter extends MemeAdapter {
 
-    public SecondMemeAdapter(Context context, ArrayList<Meme> memes) {
+    public SecondMemeAdapter(Context context, List<Meme> memes) {
         super(context, memes);
     }
 

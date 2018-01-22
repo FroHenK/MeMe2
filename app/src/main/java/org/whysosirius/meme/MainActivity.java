@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         secondMemeAdapter.memeFetcher.cancel(true);
         super.onDestroy();
     }
+
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.permission.READ_EXTERNAL_STORAGE",
@@ -216,8 +217,7 @@ public class MainActivity extends AppCompatActivity
 
             if (position == 0)
                 return PlaceholderFragment.newInstance(position + 1, firstMemeAdapter);
-            else
-            if (position == 1)
+            else if (position == 1)
                 return PlaceholderFragment.newInstance(position + 1, secondMemeAdapter);
             else
                 return PlaceholderFragment.newInstance(position + 1, thirdMemeAdapter);

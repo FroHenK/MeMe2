@@ -93,9 +93,9 @@
     <string name="set_username_url">&url;set_username</string>
     <string name="get_auth_token_url">&url;get_auth_token</string>
     <string name="set_viewed_url">&url;set_viewed</string>
-    <string name="get_rated_list_url">&url;get_rated_list</string>
+    <string name="get_rated_list_url">&url;get_top_list</string>
     <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
-    <string name="upload_meme_url">https://memkekkekmem.herokuapp.com/upload_meme</string>
+    <string name="upload_meme_url">&url;upload_meme</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

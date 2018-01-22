@@ -1,12 +1,8 @@
 package org.whysosirius.meme;
 
-import android.app.Activity;
-import android.app.job.JobParameters;
-import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -14,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
@@ -48,13 +43,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewHolder> implements RecyclerViewContainer {
-    protected ArrayList<Meme> memes;
+    protected List<Meme> memes;
     protected Context context;
     protected RecyclerView recyclerView;
 
@@ -70,7 +66,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public MemeFetcher memeFetcher;
     SharedPreferences sharedPreferences;
 
-    MemeAdapter(Context context, ArrayList<Meme> memes) {
+    MemeAdapter(Context context, List<Meme> memes) {
         this.memes = memes;
         this.context = context;
         totalPosition = 0;
@@ -376,8 +372,6 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                 if (isCancelled())
                                     return null;
                                 int size = MemeAdapter.this.memes.size();
-                                MemeAdapter.this.memes.addAll(memes);
-                                recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
 
                                 {
                                     JsonNode usernames = node.get("usernames");
@@ -396,6 +390,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                         memeIdsToIsLiked.put(value.getKey(), value.getValue().intValue());
                                     }
                                 }
+                                MemeAdapter.this.memes.addAll(memes);
+                                recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
 
                                 publishProgress(memes);
                             }
