@@ -87,4 +87,9 @@
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>
