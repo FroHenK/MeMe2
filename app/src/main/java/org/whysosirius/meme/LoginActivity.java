@@ -174,8 +174,7 @@ public class LoginActivity extends AppCompatActivity {
             if (!node.get("status").asText().equals("success"))
                 throw new IOException("unsuccessful operation");
             String authToken = node.get("auth_token").asText();
-            String username = node.get("username").asText();
-            preferences.edit().putString("auth_token", authToken).putString("username", username).commit();
+            preferences.edit().putString("auth_token", authToken).commit();
             onAuthTokenReception(authToken);
         } catch (IOException e) {
             Log.e("siriusmeme", "error reading json", e);
@@ -214,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
             JsonNode node = objectMapper.readTree(response);
             String status = node.get("status").asText();
             if (status.equals("success")) {
+                preferences.edit().putString("username", node.get("username").asText()).apply();
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
