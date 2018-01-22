@@ -173,5 +173,9 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="username">Ник</string>
+    <string name="enter_username">Введите ваш ник</string>
+    <string name="confim">Подтвердить</string>
+    <string name="login">Войти</string>
 
 </resources>
