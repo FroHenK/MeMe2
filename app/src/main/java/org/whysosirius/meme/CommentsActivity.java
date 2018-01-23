@@ -4,6 +4,9 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -29,6 +32,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.bson.types.ObjectId;
 import org.whysosirius.meme.database.Comment;
@@ -51,6 +56,7 @@ public class CommentsActivity extends Activity {
 
     private ArrayList<Comment> comments;
     private HashMap<String, String> userIdsToUsernames;
+    protected HashMap<String, String> userIdsToAvatarUrls;
     private String memeId;
     private View progressBar;
 
@@ -65,7 +71,7 @@ public class CommentsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
-
+        userIdsToAvatarUrls = new HashMap<>();
         objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
@@ -90,9 +96,6 @@ public class CommentsActivity extends Activity {
 
         comments = new ArrayList<>();
         userIdsToUsernames = new HashMap<>();
-
-
-        userIdsToUsernames.put("5a6626c4ef800600041f8e69", "orakul");
 
 
         progressBar = findViewById(R.id.login_progress);
@@ -138,6 +141,7 @@ public class CommentsActivity extends Activity {
         request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance(this).addToRequestQueue(request);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -147,6 +151,7 @@ public class CommentsActivity extends Activity {
         }
         return true;
     }
+
     private void onGetCommentsResponse(String response) {
         commentsSwipeRefreshLayout.setRefreshing(false);
         Log.i("siriusmeme", "response from get_comments: " + response);
@@ -171,6 +176,14 @@ public class CommentsActivity extends Activity {
                 while (fields.hasNext()) {
                     Map.Entry<String, JsonNode> value = fields.next();
                     userIdsToUsernames.put(value.getKey(), value.getValue().textValue());
+                }
+            }
+            {
+                JsonNode avatarUrls = node.get("avatar_urls");
+                Iterator<Map.Entry<String, JsonNode>> fields = avatarUrls.fields();
+                while (fields.hasNext()) {
+                    Map.Entry<String, JsonNode> value = fields.next();
+                    userIdsToAvatarUrls.put(value.getKey(), value.getValue().textValue());
                 }
             }
 
@@ -252,6 +265,22 @@ public class CommentsActivity extends Activity {
             holder.commentAuthorTextView.setText(userIdsToUsernames.get(comment.getAuthorId().toHexString()));
             holder.commentTextTextView.setText(comment.getText());
 
+            Picasso.with(CommentsActivity.this).load(userIdsToAvatarUrls.get(comment.getAuthorId().toHexString())).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    holder.commentAuthorImageView.setBackground(new BitmapDrawable(CommentsActivity.this.getResources(), bitmap));
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
         }
 
         @Override
@@ -263,7 +292,7 @@ public class CommentsActivity extends Activity {
 
             final TextView commentTextTextView;
             final TextView commentAuthorTextView;
-            final ImageView commentAuthorImageView;
+            final View commentAuthorImageView;
 
             public ViewHolder(View itemView) {
                 super(itemView);

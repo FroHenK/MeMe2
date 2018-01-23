@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <View
             android:id="@+id/comment_author_image_view"
             android:layout_width="16dp"
             android:layout_height="16dp"
@@ -22,7 +22,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/icon_meme" />
+            android:background="@drawable/icon_meme" />
 
         <TextView
             android:id="@+id/comment_author_text_view"
