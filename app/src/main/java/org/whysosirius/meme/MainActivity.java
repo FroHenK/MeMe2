@@ -44,6 +44,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(mSectionsPagerAdapter.getCount() - 1);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -175,14 +177,27 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onResume() {
             super.onResume();
-//            if (adapter.memeFetcher != null && !adapter.memeFetcher.isCancelled())
-//                adapter.startKek();
+            Log.v("siriusmeme","kek");
+            if (adapter.memeFetcher != null && adapter.memeFetcher.isCancelled())
+                adapter.startKek();
         }
 
         @Override
         public void onPause() {
             super.onPause();
-//            adapter.memeFetcher.cancel(true);
+            adapter.memeFetcher.cancel(true);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            adapter.memeFetcher.cancel(true);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            adapter.memeFetcher.cancel(true);
         }
 
         private static final String ARG_SECTION_NUMBER = "section_number";
@@ -222,8 +237,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        ArrayList<PlaceholderFragment> fragmentArrayList = new ArrayList<>();
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -232,16 +247,14 @@ public class MainActivity extends AppCompatActivity
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            RecyclerView.Adapter adapter = null;
-
             if (position == 0)
-                return PlaceholderFragment.newInstance(position + 1, firstMemeAdapter);
-            else if (position == 2)
-                return PlaceholderFragment.newInstance(position + 1, secondMemeAdapter);
+                return PlaceholderFragment.newInstance(1,firstMemeAdapter);
             else
-                return PlaceholderFragment.newInstance(position + 1, thirdMemeAdapter);
-
-        }
+            if (position == 1)
+                return PlaceholderFragment.newInstance(2,thirdMemeAdapter);
+            else
+                return PlaceholderFragment.newInstance(3,secondMemeAdapter);
+         }
 
         @Override
         public int getCount() {

@@ -94,8 +94,11 @@
     <string name="get_auth_token_url">&url;get_auth_token</string>
     <string name="set_viewed_url">&url;set_viewed</string>
     <string name="get_rated_list_url">&url;get_top_list</string>
-    <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
     <string name="upload_meme_url">&url;upload_meme</string>
+    <string name="get_comments_url">&url;get_comments</string>
+    <string name="post_comments_url">&url;post_comments</string>
+    <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
+
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
