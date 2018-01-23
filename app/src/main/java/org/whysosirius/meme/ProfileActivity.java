@@ -21,6 +21,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.picasso.Picasso;
 
 import org.whysosirius.meme.database.Meme;
@@ -42,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private RecyclerView profileRecyclerView;
     private ProfileMemeAdapter adapter;
+    private boolean isSubscribed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +70,13 @@ public class ProfileActivity extends AppCompatActivity {
             supportActionBar.setHomeButtonEnabled(true);
             supportActionBar.setDisplayShowHomeEnabled(true);
         }
-
-
         setTitle(intent.getStringExtra("username"));
 
-        fab = (FloatingActionButton) findViewById(R.id.profile_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab = findViewById(R.id.profile_fab);
+        fab.setEnabled(false);
+        fab.setBackgroundColor(0x00000000);
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
 
         profileRecyclerView = findViewById(R.id.profile_recycler_view);
         collapsingToolbarLayout = findViewById(R.id.profile_collapsing);
@@ -99,6 +96,12 @@ public class ProfileActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         Picasso.with(this).load(userAvatarUrl).into(avatarImageView);
+    }
+
+    private void setIsSubscribed(boolean isSubscribed) {
+        this.isSubscribed = isSubscribed;
+        fab.setEnabled(true);
+        fab.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -187,6 +190,13 @@ public class ProfileActivity extends AppCompatActivity {
             HashMap<String, String> map = new HashMap<>();
             map.put("user_id", userId);
             return map;
+        }
+
+        @Override
+        protected void onResponse(JsonNode node) {
+            if (node.get("status").asText().equals("success")) {
+                setIsSubscribed(node.get("is_subscribed").asBoolean());
+            }
         }
     }
 }

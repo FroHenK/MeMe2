@@ -401,7 +401,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
                             JsonNode node = objectMapper.readTree(response);
-
+                            onResponse(node);
                             if (node.get("status").asText().equals("success")) {
                                 JsonNode memesNode = node.get("links");
                                 ArrayList<Meme> memes = new ArrayList<>();
@@ -464,6 +464,10 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         @Override
         protected void onProgressUpdate(ArrayList<Meme>[] values) {
         }
+    }
+
+    protected void onResponse(JsonNode node) {
+
     }
 
     protected HashMap<String, String> getInitialMap() {
