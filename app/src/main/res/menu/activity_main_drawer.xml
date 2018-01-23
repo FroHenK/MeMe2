@@ -5,26 +5,28 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/MainPage"
-              android:title="Memes feed"
-              android:checked="true"
-            />
         <item
-            android:id="@+id/add_mem"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Upload meme" />
+            android:id="@+id/MainPage"
+            android:checked="true"
+            android:icon="@drawable/ic_format_align_justify_black_24dp"
+            android:title="Лента мемов" />
         <item
             android:id="@+id/my_page"
             android:icon="@drawable/fui_done_check_mark"
-            android:title="My page" />
+            android:title="Mой профиль" />
+        <item
+            android:id="@+id/add_mem"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Загрузить мем" />
         <item
             android:id="@+id/app_bar_switch"
-            android:title="Show amoral"
             android:checkable="false"
+            android:icon="@drawable/ic_visibility_black"
+            android:title="Нецензурное"
             app:actionLayout="@layout/switch_item" />
         <item
             android:id="@+id/logout_btn"
-            android:title="Logout" />
+            android:title="Выйти" />
     </group>
 
 
