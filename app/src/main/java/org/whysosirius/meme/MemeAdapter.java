@@ -129,7 +129,13 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         }
         return new String(text);
     }
-
+    public void refresh(){
+        memeFetcher.cancel(false);
+        while (!memeFetcher.is_finished){}
+        memes.clear();
+        notifyDataSetChanged();
+        startKek();
+    }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
@@ -333,26 +339,16 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         }
     }
 
-    public class MemeFetcherTask extends AsyncTaskLoader<String> {
-
-        public MemeFetcherTask(@NonNull Context context) {
-            super(context);
-        }
-
-        @Nullable
-        @Override
-        public String loadInBackground() {
-            return null;
-        }
-
-    }
-
     protected class MemeFetcher extends AsyncTask<String, ArrayList<Meme>, Void> {
+        boolean is_finished = false;
         @Override
         protected Void doInBackground(String... strings) {
+            is_finished = false;
             while (true) {//FIXME endless loop
-                if (isCancelled())
+                if (isCancelled()) {
+                    is_finished = true;
                     return null;
+                }
                 try {
                     if (TRIGGER_MEME + maxLoadedPosition - totalMemesLoaded >= 0) {
                         if (sharedPreferences.contains("auth_token")) {
@@ -391,8 +387,10 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                     memes.add(meme);
                                 }
                                 totalMemesLoaded += memes.size();
-                                if (isCancelled())
+                                if (isCancelled()) {
+                                    is_finished = true;
                                     return null;
+                                }
                                 int size = MemeAdapter.this.memes.size();
 
                                 {

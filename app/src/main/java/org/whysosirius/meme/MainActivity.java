@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -96,7 +97,11 @@ public class MainActivity extends AppCompatActivity
             );
         }
     }
-
+    private void refresh(){
+        firstMemeAdapter.refresh();
+        secondMemeAdapter.refresh();
+        thirdMemeAdapter.refresh();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -136,6 +141,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
         textView.setText(preferences.getString("username", ""));
+
+        CompoundButton mySwitch = navigationView.getMenu().getItem(2).getActionView().findViewById(R.id.amoral_switch);
+        if (preferences.getBoolean("is_amoral", false) == true){
+            mySwitch.setChecked(true);
+        }
+        mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                preferences.edit().putBoolean("is_amoral", b).apply();
+               // refresh();
+            }
+        });
+
         verifyStoragePermissions(this);
     }
 
