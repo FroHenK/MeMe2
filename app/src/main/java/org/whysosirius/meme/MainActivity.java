@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -25,6 +26,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -262,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public static PlaceholderFragment newInstance(int sectionNumber, MemeAdapter adapter) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             fragment.setAdapter(adapter);
-
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
@@ -275,8 +276,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             RecyclerView recyclerView = rootView.findViewById(R.id.main_recycler_view);
             ((RecyclerViewContainer) adapter).setRecyclerView(recyclerView);
-            recyclerView.setHasFixedSize(true);//if memes become expandable delete this
-
+             recyclerView.setHasFixedSize(false);
+            SwipeRefreshLayout refreshLayout = rootView.findViewById(R.id.memes_swipe_refresh);
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    MainActivity activity = (MainActivity) PlaceholderFragment.this.getActivity();
+                    activity.refresh();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            refreshLayout.setRefreshing(false);
+                        }
+                    }, 3500); // TODO ISPRAVIT COSTIL
+                }
+            });
             RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity().getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
 
