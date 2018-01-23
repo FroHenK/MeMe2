@@ -9,8 +9,7 @@
     </style>
     <!-- Tab theme -->
     <style name="ToolbarStyle" parent="@style/ThemeOverlay.AppCompat.ActionBar">
-        <!-- Customize color of navigation drawer icon and back arrow -->
-        <item name="colorControlNormal">@color/white</item>
+        <!-- Customize color of navigation drawer icon and back arrow --> <item name="colorAccent">#fff</item>
     </style>
 
     <style name="TabAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -93,6 +92,10 @@
     </style>
 
     <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+    </style>
+    <style name="MyEditTextWhite" parent="Theme.AppCompat.Light">
         <item name="colorControlNormal">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorPrimaryDark</item>
     </style>
