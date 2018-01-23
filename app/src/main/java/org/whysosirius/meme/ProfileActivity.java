@@ -49,11 +49,13 @@ public class ProfileActivity extends AppCompatActivity {
     private ProfileMemeAdapter adapter;
     private boolean isSubscribed;
     private SharedPreferences preferences;
+    private boolean firstTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        firstTime = true;
         intent = getIntent();
         userId = intent.getStringExtra("user_id");
         userAvatarUrl = intent.getStringExtra("user_avatar_url");
@@ -240,8 +242,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         @Override
         protected void onResponse(JsonNode node) {
-            if (node.get("status").asText().equals("success")) {
+            if (node.get("status").asText().equals("success") && firstTime) {
                 setIsSubscribed(node.get("is_subscribed").asBoolean());
+                firstTime = false;
             }
         }
     }
