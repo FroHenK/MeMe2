@@ -3,14 +3,17 @@ package org.whysosirius.meme;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -39,9 +42,13 @@ import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,8 +56,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final int RC_GET_MEME_IMAGE = 420;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     final static String host = "";
@@ -58,8 +64,10 @@ public class MainActivity extends AppCompatActivity
     private FirstMemeAdapter firstMemeAdapter;
     private SecondMemeAdapter secondMemeAdapter;
     private ThirdMemeAdapter thirdMemeAdapter;
+    private SubscribeMemeAdapter subscribeMemeAdapter;
     private SharedPreferences preferences;
 
+    public static Snackbar internetBar;
 
     @Override
     protected void onStop() {
@@ -94,14 +102,14 @@ public class MainActivity extends AppCompatActivity
                     activity,
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
-            );
-        }
+            );}
     }
 
     private void refresh() {
         firstMemeAdapter.refresh();
         secondMemeAdapter.refresh();
         thirdMemeAdapter.refresh();
+        subscribeMemeAdapter.refresh();
     }
 
     @Override
@@ -113,10 +121,13 @@ public class MainActivity extends AppCompatActivity
         firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), getString(R.string.get_new_list_url));
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
         thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
+        subscribeMemeAdapter = new SubscribeMemeAdapter(this.getApplicationContext(), getString(R.string.get_sub_url));
 
+        registerReceiver(new NetworkCheckReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         thirdMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
+        subscribeMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
 
         setContentView(R.layout.activity_main);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -144,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
         textView.setText(preferences.getString("username", ""));
 
-        CompoundButton mySwitch = navigationView.getMenu().getItem(2).getActionView().findViewById(R.id.amoral_switch);
+        CompoundButton mySwitch = navigationView.getMenu().getItem(3).getActionView().findViewById(R.id.amoral_switch);
         if (Boolean.valueOf(preferences.getBoolean("is_amoral", false)).toString().equals(Boolean.valueOf(("k" + "e" + "k").equals("kek")).toString())) {
             mySwitch.setChecked(true);
         }
@@ -207,13 +218,26 @@ public class MainActivity extends AppCompatActivity
             super.onPause();
             adapter.memeFetcher.cancel(true);
         }
-
+        @Override
+        public void onStart(){
+            super.onStart();
+            EventBus.getDefault().register(this);
+        }
         @Override
         public void onStop() {
             super.onStop();
+            EventBus.getDefault().unregister(this);
             adapter.memeFetcher.cancel(true);
         }
-
+        @Subscribe
+        public void onNetworkChangeEvent(OnNetworkEvent event){
+            boolean state = event.isNetworkState();
+            if (state == true){
+                MainActivity.internetBar.dismiss();
+            }else{
+                //MainActivity.internetBar = Snackbar.make(,"Нет подключения к интернету", Snackbar.LENGTH_LONG);
+            }
+        }
         @Override
         public void onDestroy() {
             super.onDestroy();
@@ -273,13 +297,16 @@ public class MainActivity extends AppCompatActivity
             else if (position == 1)
                 return PlaceholderFragment.newInstance(2, thirdMemeAdapter);
             else
-                return PlaceholderFragment.newInstance(3, secondMemeAdapter);
+                if (position == 2)
+                return PlaceholderFragment.newInstance(3, subscribeMemeAdapter);
+            else
+                return PlaceholderFragment.newInstance(4, secondMemeAdapter);
         }
 
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 4;
         }
     }
 
@@ -326,9 +353,14 @@ public class MainActivity extends AppCompatActivity
                 return params;
             }
 
+            @Override
+            protected void deliverResponse(NetworkResponse response) {
+                super.deliverResponse(response);
+                refresh();
+            }
             /*
-            * Here we are passing image by renaming it with a unique name
-            * */
+                        * Here we are passing image by renaming it with a unique name
+                        * */
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();

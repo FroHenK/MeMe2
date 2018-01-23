@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     HashMap<String, String> map = new HashMap<>();
                     map.put("auth_token", preferences.getString("auth_token", null));
                     map.put("username", usernameText.getText().toString());
+                    preferences.edit().putString("username",usernameText.getText().toString()).apply();
                     return map;
                 }
             };
@@ -120,9 +121,9 @@ public class LoginActivity extends AppCompatActivity {
         showProgress(false, setUsernameForm);
         Log.i("siriusmeme", "response from get_auth_token: " + response);
 
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
+        /*Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
         snackbar.show();
-
+        */
         try {
             JsonNode node = objectMapper.readTree(response);
             String status = node.get("status").asText();
@@ -166,8 +167,9 @@ public class LoginActivity extends AppCompatActivity {
     private void onGetAuthTokenResponse(String response) {
         Log.i("siriusmeme", "response from get_auth_token: " + response);
 
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
+        /*Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
         snackbar.show();
+        */
 
         try {
             JsonNode node = objectMapper.readTree(response);
@@ -207,9 +209,9 @@ public class LoginActivity extends AppCompatActivity {
         showProgress(false, loginForm);
         Log.i("siriusmeme", "response from validate_session: " + response);
 
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
+        /*Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_login_layout), response, Snackbar.LENGTH_LONG);
         snackbar.show();
-
+        */
 
         try {
             JsonNode node = objectMapper.readTree(response);

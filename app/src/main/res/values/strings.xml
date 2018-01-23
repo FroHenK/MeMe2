@@ -4,6 +4,7 @@
     <string name="tab_text_1">Новое</string>
     <string name="tab_text_2">Просмотренное</string>
     <string name="tab_text_3">Лучшее</string>
+    <string name="tab_text_4">Подписки</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="progress_dialog">Processing</string>
@@ -96,6 +97,7 @@
     <string name="get_rated_list_url">&url;get_top_list</string>
     <string name="upload_meme_url">&url;upload_meme</string>
     <string name="get_comments_url">&url;get_comments</string>
+    <string name="get_sub_url">&url;get_sub_list</string>
     <string name="post_comments_url">&url;post_comments</string>
     <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
 
