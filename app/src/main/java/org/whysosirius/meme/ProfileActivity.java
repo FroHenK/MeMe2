@@ -3,6 +3,8 @@ package org.whysosirius.meme;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -73,10 +75,8 @@ public class ProfileActivity extends AppCompatActivity {
         setTitle(intent.getStringExtra("username"));
 
         fab = findViewById(R.id.profile_fab);
-        fab.setEnabled(false);
-        fab.setBackgroundColor(0x00000000);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+
+        fab.setBackgroundTintList(ColorStateList.valueOf(0x00000000));
 
         profileRecyclerView = findViewById(R.id.profile_recycler_view);
         collapsingToolbarLayout = findViewById(R.id.profile_collapsing);
@@ -100,9 +100,28 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setIsSubscribed(boolean isSubscribed) {
         this.isSubscribed = isSubscribed;
-        fab.setEnabled(true);
-        fab.setVisibility(View.VISIBLE);
+        this.runOnUiThread(() -> {
+            if (isSubscribed) {
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.cardview_dark_background)));
+                fab.setImageResource(R.drawable.ic_person_remote_black_24dp);
+                fab.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                fab.setOnClickListener(view -> {
+                    setIsSubscribed(false);
+                });
+            } else {
+                fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+                fab.setImageResource(R.drawable.ic_person_add_black_24dp);
+                fab.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                fab.setOnClickListener(view -> {
+                    setIsSubscribed(true);
+                });
+            }
+        });
+
     }
+
 
     @Override
     protected void onPause() {
