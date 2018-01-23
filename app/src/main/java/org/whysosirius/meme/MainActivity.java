@@ -97,11 +97,13 @@ public class MainActivity extends AppCompatActivity
             );
         }
     }
-    private void refresh(){
+
+    private void refresh() {
         firstMemeAdapter.refresh();
         secondMemeAdapter.refresh();
         thirdMemeAdapter.refresh();
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -143,14 +145,14 @@ public class MainActivity extends AppCompatActivity
         textView.setText(preferences.getString("username", ""));
 
         CompoundButton mySwitch = navigationView.getMenu().getItem(2).getActionView().findViewById(R.id.amoral_switch);
-        if (preferences.getBoolean("is_amoral", false) == true){
+        if (Boolean.valueOf(preferences.getBoolean("is_amoral", false)).toString().equals(Boolean.valueOf(("k" + "e" + "k").equals("kek")).toString())) {
             mySwitch.setChecked(true);
         }
         mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 preferences.edit().putBoolean("is_amoral", b).apply();
-               // refresh();
+                refresh();
             }
         });
 
@@ -195,7 +197,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onResume() {
             super.onResume();
-            Log.v("siriusmeme","kek");
+            Log.v("siriusmeme", "kek");
             if (adapter.memeFetcher != null && adapter.memeFetcher.isCancelled())
                 adapter.startKek();
         }
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity
             ((RecyclerViewContainer) adapter).setRecyclerView(recyclerView);
             recyclerView.setHasFixedSize(true);//if memes become expandable delete this
 
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+            RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity().getApplicationContext());
             recyclerView.setLayoutManager(layoutManager);
 
             recyclerView.setAdapter(adapter);
@@ -257,6 +259,7 @@ public class MainActivity extends AppCompatActivity
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         ArrayList<PlaceholderFragment> fragmentArrayList = new ArrayList<>();
+
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -266,13 +269,12 @@ public class MainActivity extends AppCompatActivity
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0)
-                return PlaceholderFragment.newInstance(1,firstMemeAdapter);
+                return PlaceholderFragment.newInstance(1, firstMemeAdapter);
+            else if (position == 1)
+                return PlaceholderFragment.newInstance(2, thirdMemeAdapter);
             else
-            if (position == 1)
-                return PlaceholderFragment.newInstance(2,thirdMemeAdapter);
-            else
-                return PlaceholderFragment.newInstance(3,secondMemeAdapter);
-         }
+                return PlaceholderFragment.newInstance(3, secondMemeAdapter);
+        }
 
         @Override
         public int getCount() {

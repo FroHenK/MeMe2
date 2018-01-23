@@ -1,5 +1,6 @@
 package org.whysosirius.meme;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -129,13 +130,23 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         }
         return new String(text);
     }
-    public void refresh(){
-        memeFetcher.cancel(false);
-        while (!memeFetcher.is_finished){}
+
+    public void refresh() {
+        memeFetcher.cancel(true);
+        int size = memes.size();
         memes.clear();
-        notifyDataSetChanged();
+        maxLoadedPosition = 0;
+        totalMemesLoaded = 0;
+        try {
+            notifyItemRangeRemoved(0, size);
+        } catch (Exception e) {
+            Log.e("siriusmeme", "kek", e);
+        }
+        recyclerView.post(() -> notifyItemRangeRemoved(0, size));
         startKek();
     }
+
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Meme meme = memes.get(position);
@@ -341,6 +352,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
     protected class MemeFetcher extends AsyncTask<String, ArrayList<Meme>, Void> {
         boolean is_finished = false;
+
         @Override
         protected Void doInBackground(String... strings) {
             is_finished = false;
@@ -359,6 +371,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                 protected Map<String, String> getParams() throws AuthFailureError {
                                     HashMap<String, String> map = new HashMap<>();
                                     map.put("auth_token", sharedPreferences.getString("auth_token", null));
+                                    map.put("amoral", String.valueOf(sharedPreferences.getBoolean("is_amoral", false)));
                                     map.put("count", String.valueOf(MEMES_IN_PAGE));
                                     if (MemeAdapter.this.memes.size() != 0)
                                         map.put("last", MemeAdapter.this.memes.get(MemeAdapter.this.memes.size() - 1).getId().toHexString());

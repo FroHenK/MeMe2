@@ -19,6 +19,7 @@
         android:minHeight="?attr/actionBarSize"
         android:foregroundGravity="top"
         android:layout_gravity="top"
+        app:theme="@style/ToolbarStyle"
         />
 
     <com.github.chrisbanes.photoview.PhotoView
