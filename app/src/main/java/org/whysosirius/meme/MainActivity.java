@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
         textView.setText(preferences.getString("username", ""));
 
-        CompoundButton mySwitch = navigationView.getMenu().getItem(2).getActionView().findViewById(R.id.amoral_switch);
+        CompoundButton mySwitch = navigationView.getMenu().getItem(3).getActionView().findViewById(R.id.amoral_switch);
         if (Boolean.valueOf(preferences.getBoolean("is_amoral", false)).toString().equals(Boolean.valueOf(("k" + "e" + "k").equals("kek")).toString())) {
             mySwitch.setChecked(true);
         }
@@ -297,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (position == 2)
                 return PlaceholderFragment.newInstance(3, subscribeMemeAdapter);
             else
-                return PlaceholderFragment.newInstance(3, secondMemeAdapter);
+                return PlaceholderFragment.newInstance(4, secondMemeAdapter);
         }
 
         @Override
