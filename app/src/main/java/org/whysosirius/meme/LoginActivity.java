@@ -83,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     HashMap<String, String> map = new HashMap<>();
                     map.put("auth_token", preferences.getString("auth_token", null));
                     map.put("username", usernameText.getText().toString());
-                    preferences.edit().putString("username",usernameText.getText().toString());
+                    preferences.edit().putString("username",usernameText.getText().toString()).apply();
                     return map;
                 }
             };

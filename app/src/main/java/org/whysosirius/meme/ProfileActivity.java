@@ -47,7 +47,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
         intent = getIntent();
         userId = intent.getStringExtra("user_id");
         userAvatarUrl = intent.getStringExtra("user_avatar_url");
