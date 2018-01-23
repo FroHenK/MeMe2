@@ -97,8 +97,10 @@
     <string name="get_rated_list_url">&url;get_top_list</string>
     <string name="upload_meme_url">&url;upload_meme</string>
     <string name="get_comments_url">&url;get_comments</string>
-    <string name="get_sub_url">&url;get_sub_list</string>
+    <string name="get_subscriptions_list_url">&url;get_subscriptions_list</string>
     <string name="post_comments_url">&url;post_comments</string>
+    <string name="unsubscribe_url">&url;unsubscribe</string>
+    <string name="subscribe_url">&url;subscribe</string>
     <string name="siriusmeme_preferences_key">siriusmeme_preferences_key</string>
 
 

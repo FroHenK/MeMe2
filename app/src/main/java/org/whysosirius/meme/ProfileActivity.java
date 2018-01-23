@@ -3,6 +3,7 @@ package org.whysosirius.meme;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
@@ -46,6 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
     private RecyclerView profileRecyclerView;
     private ProfileMemeAdapter adapter;
     private boolean isSubscribed;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,8 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         setSupportActionBar(toolbar);
+        preferences = getSharedPreferences(getString(R.string.siriusmeme_preferences_key), MODE_PRIVATE);
+
 
         supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
@@ -108,6 +113,17 @@ public class ProfileActivity extends AppCompatActivity {
                 fab.setVisibility(View.VISIBLE);
                 fab.setOnClickListener(view -> {
                     setIsSubscribed(false);
+                    StringRequest request = new StringRequest(Request.Method.POST, getString(R.string.unsubscribe_url), null, null) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put("auth_token", preferences.getString("auth_token", null));
+                            map.put("user_id", userId);
+                            return map;
+                        }
+                    };
+                    request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    VolleySingleton.getInstance(ProfileActivity.this).addToRequestQueue(request);
                 });
             } else {
                 fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
@@ -116,6 +132,17 @@ public class ProfileActivity extends AppCompatActivity {
                 fab.setVisibility(View.VISIBLE);
                 fab.setOnClickListener(view -> {
                     setIsSubscribed(true);
+                    StringRequest request = new StringRequest(Request.Method.POST, getString(R.string.subscribe_url), null, null) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put("auth_token", preferences.getString("auth_token", null));
+                            map.put("user_id", userId);
+                            return map;
+                        }
+                    };
+                    request.setRetryPolicy(new DefaultRetryPolicy(40000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    VolleySingleton.getInstance(ProfileActivity.this).addToRequestQueue(request);
                 });
             }
         });

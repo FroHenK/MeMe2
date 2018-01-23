@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         firstMemeAdapter = new FirstMemeAdapter(this.getApplicationContext(), getString(R.string.get_new_list_url));
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
         thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
-        subscribeMemeAdapter = new SubscribeMemeAdapter(this.getApplicationContext(), getString(R.string.get_sub_url));
+        subscribeMemeAdapter = new SubscribeMemeAdapter(this.getApplicationContext(), getString(R.string.get_subscriptions_list_url));
 
         registerReceiver(new NetworkCheckReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
