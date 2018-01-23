@@ -269,6 +269,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             public void onClick(View v) {
                 Intent intent = new Intent(context, FullscreenActivity.class);
                 intent.putExtra("url", meme.getUrl());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });

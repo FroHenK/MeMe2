@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'kekmaster'
             keyPassword 'lollol123'
-            storeFile file('/home/frohenk/Downloads/kekmaster.jks')
+            storeFile file('/home/azat/Downloads/kekmaster.jks')
             storePassword 'lollol123'
         }
     }
