@@ -1,5 +1,7 @@
 package org.whysosirius.meme;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,6 +31,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +42,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -324,8 +329,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.add_mem) {
+        DrawerLayout layout = findViewById(R.id.drawer_layout);
+        layout.closeDrawer(GravityCompat.START);
 
+        if (id == R.id.add_mem) {
             Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(pickPhoto, RC_GET_MEME_IMAGE);//one can be replaced with any action code
@@ -340,9 +347,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void showProgress(final boolean show, final View view) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        view.setVisibility(show ? View.GONE : View.VISIBLE);
+        view.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //    view.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+        ProgressBar progressBar = findViewById(R.id.upload_progress);
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        progressBar.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                //     progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
     private void uploadBitmap(final Bitmap bitmap, String title, boolean isAmoral) {
 
-
+        showProgress(true, findViewById(R.id.main_content));
         VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, getString(R.string.upload_meme_url), null, null) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -356,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void deliverResponse(NetworkResponse response) {
                 super.deliverResponse(response);
+                showProgress(false, findViewById(R.id.main_content));
                 refresh();
             }
             /*

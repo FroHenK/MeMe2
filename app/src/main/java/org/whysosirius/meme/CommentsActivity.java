@@ -1,7 +1,6 @@
 package org.whysosirius.meme;
 
-import android.app.ActionBar;
-import android.app.Activity;
+import android.support.v7.app.ActionBar;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,8 +10,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,9 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -35,9 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import org.bson.types.ObjectId;
 import org.whysosirius.meme.database.Comment;
-import org.whysosirius.meme.database.Meme;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class CommentsActivity extends Activity {
+public class CommentsActivity extends AppCompatActivity {
 
     private View sendCommentLayout;
     private EditText commentEditText;
@@ -81,9 +78,9 @@ public class CommentsActivity extends Activity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.comments_toolbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setActionBar(myToolbar);
+            setSupportActionBar(myToolbar);
             myToolbar.setTitle(intent.getStringExtra("title"));
-            ActionBar actionBar = getActionBar();
+            ActionBar actionBar = getSupportActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(intent.getStringExtra("title"));
         }
