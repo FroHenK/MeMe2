@@ -42,6 +42,7 @@ import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
@@ -121,7 +122,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         secondMemeAdapter = new SecondMemeAdapter(this.getApplicationContext(), getString(R.string.get_old_list_url));
         thirdMemeAdapter = new ThirdMemeAdapter(this.getApplicationContext(), getString(R.string.get_rated_list_url));
         subscribeMemeAdapter = new SubscribeMemeAdapter(this.getApplicationContext(), getString(R.string.get_sub_url));
+
         registerReceiver(new NetworkCheckReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
         thirdMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         firstMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
         subscribeMemeAdapter.setSecondMemeAdapter(secondMemeAdapter);
@@ -350,9 +353,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return params;
             }
 
+            @Override
+            protected void deliverResponse(NetworkResponse response) {
+                super.deliverResponse(response);
+                refresh();
+            }
             /*
-            * Here we are passing image by renaming it with a unique name
-            * */
+                        * Here we are passing image by renaming it with a unique name
+                        * */
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
