@@ -137,6 +137,11 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         memes.clear();
         maxLoadedPosition = 0;
         totalMemesLoaded = 0;
+        try {
+            notifyItemRangeRemoved(0, size);
+        } catch (Exception e) {
+            Log.e("siriusmeme", "kek", e);
+        }
         recyclerView.post(() -> notifyItemRangeRemoved(0, size));
         startKek();
     }
