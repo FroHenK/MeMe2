@@ -291,6 +291,8 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             Intent intent = new Intent(this.context, ProfileActivity.class);
             intent.putExtra("username", userIdsToUsernames.get(meme.getAuthorId().toHexString()));
             intent.putExtra("user_id", (meme.getAuthorId()).toHexString());
+            intent.putExtra("user_avatar_url", userIdsToAvatarUrls.get(meme.getAuthorId().toHexString()));
+
             this.context.startActivity(intent);
         };
         holder.memeAuthorTextView.setOnClickListener(onClickListener);
@@ -377,7 +379,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                             StringRequest request = new StringRequest(Request.Method.POST, strings[0], future, future) {
                                 @Override
                                 protected Map<String, String> getParams() throws AuthFailureError {
-                                    HashMap<String, String> map = new HashMap<>();
+                                    HashMap<String, String> map = new HashMap<>(getInitialMap());
                                     map.put("auth_token", sharedPreferences.getString("auth_token", null));
                                     map.put("amoral", String.valueOf(sharedPreferences.getBoolean("is_amoral", false)));
                                     map.put("count", String.valueOf(MEMES_IN_PAGE));
@@ -454,7 +456,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    Log.e(MemeAdapter.class.getName(), "siriusmeme", e);
+                    Log.w(MemeAdapter.class.getName(), "siriusmeme", e);
                 }
             }
         }
@@ -462,6 +464,10 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         @Override
         protected void onProgressUpdate(ArrayList<Meme>[] values) {
         }
+    }
+
+    protected HashMap<String, String> getInitialMap() {
+        return new HashMap<>();
     }
 
 }
