@@ -1,7 +1,6 @@
 package org.whysosirius.meme;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -52,6 +52,15 @@ public class ProfileActivity extends AppCompatActivity {
         userAvatarUrl = intent.getStringExtra("user_avatar_url");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
+        toolbar.setNavigationIcon(android.support.v7.appcompat.R.drawable.abc_ic_ab_back_material);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                onBackPressed();
+            }
+        });
+
         setSupportActionBar(toolbar);
 
         supportActionBar = getSupportActionBar();
@@ -59,6 +68,8 @@ public class ProfileActivity extends AppCompatActivity {
             supportActionBar.setHomeButtonEnabled(true);
             supportActionBar.setDisplayShowHomeEnabled(true);
         }
+
+
         setTitle(intent.getStringExtra("username"));
 
         fab = (FloatingActionButton) findViewById(R.id.profile_fab);

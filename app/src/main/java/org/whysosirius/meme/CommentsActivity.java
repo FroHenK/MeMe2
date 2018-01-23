@@ -192,7 +192,7 @@ public class CommentsActivity extends AppCompatActivity {
                 //commentsAdapter.notifyItemRangeRemoved(0, formerSize);
                 commentsAdapter.notifyItemRangeChanged(0, this.comments.size());
             });
-
+            commentsRecyclerView.smoothScrollToPosition(comments.size());
 
         } catch (IOException e) {
             Log.e("siriusmeme", "error while reading servers response", e);

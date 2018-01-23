@@ -331,13 +331,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         DrawerLayout layout = findViewById(R.id.drawer_layout);
         layout.closeDrawer(GravityCompat.START);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        if (id == R.id.my_page){
+            navigationView.getMenu().getItem(0).setChecked(true);
 
+        }else
         if (id == R.id.add_mem) {
+            navigationView.getMenu().getItem(0).setChecked(true);
             Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(pickPhoto, RC_GET_MEME_IMAGE);//one can be replaced with any action code
 
         } else if (id == R.id.logout_btn) {
+            navigationView.getMenu().getItem(0).setChecked(true);
             preferences.edit().clear().apply();
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(this, LoginActivity.class);
