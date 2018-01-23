@@ -1,4 +1,4 @@
-<!DOCTYPE resources [<!ENTITY url "https://memkekkekmem.herokuapp.com/">]>
+<!DOCTYPE resources [<!ENTITY url "http://192.168.43.23:8080/">]>
 <resources>
     <string name="app_name">Memography</string>
     <string name="tab_text_1">Новое</string>
@@ -272,5 +272,6 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="get_user_memes_list_url">&url;get_user_memes_list</string>
 
 </resources>
