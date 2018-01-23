@@ -57,6 +57,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
 
     private HashMap<Meme, Integer> memeTotalPositionMap;
     protected HashMap<String, String> userIdsToUsernames;
+    protected HashMap<String, String> userIdsToAvatarUrls;
     protected HashMap<String, Integer> memeIdsToIsLiked;
 
     protected int totalPosition;
@@ -75,6 +76,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         totalMemesLoaded = memes.size();
         memeTotalPositionMap = new HashMap<>();
         userIdsToUsernames = new HashMap<>();
+        userIdsToAvatarUrls = new HashMap<>();
         sharedPreferences = context.getSharedPreferences(context.getString(R.string.siriusmeme_preferences_key), MODE_PRIVATE);
 
         memeIdsToIsLiked = new HashMap<>();
@@ -267,6 +269,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
             public void onClick(View v) {
                 Intent intent = new Intent(context, FullscreenActivity.class);
                 intent.putExtra("url", meme.getUrl());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
@@ -285,7 +288,10 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         holder.memeAuthorTextView.setText(userIdsToUsernames.get(meme.getAuthorId().toHexString()));
 
         View.OnClickListener onClickListener = v -> {
-            //todo open author's activity
+            Intent intent = new Intent(this.context, ProfileActivity.class);
+            intent.putExtra("username", userIdsToUsernames.get(meme.getAuthorId().toHexString()));
+            intent.putExtra("user_id", (meme.getAuthorId()).toHexString());
+            this.context.startActivity(intent);
         };
         holder.memeAuthorTextView.setOnClickListener(onClickListener);
         holder.memeAuthorImageView.setOnClickListener(onClickListener);
@@ -293,11 +299,13 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         holder.commentButton.setOnClickListener(view -> {
             Intent intent = new Intent(context, CommentsActivity.class);
             intent.putExtra("meme_id", meme.getId().toHexString());
-            intent.putExtra("title", holder.memeTitleTextView.getText());//todo send meme.getTitle()
+            intent.putExtra("title", holder.memeTitleTextView.getText());
             context.startActivity(intent);
         });
 
         Picasso.with(context).load(meme.getUrl()).into(holder.memeImageView);
+        Picasso.with(context).load(userIdsToAvatarUrls.get(meme.getAuthorId().toHexString())).into(holder.memeAuthorImageView);
+
     }
 
     @Override
@@ -412,6 +420,15 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                     while (fields.hasNext()) {
                                         Map.Entry<String, JsonNode> value = fields.next();
                                         userIdsToUsernames.put(value.getKey(), value.getValue().textValue());
+                                    }
+                                }
+
+                                {
+                                    JsonNode avatarUrls = node.get("avatar_urls");
+                                    Iterator<Map.Entry<String, JsonNode>> fields = avatarUrls.fields();
+                                    while (fields.hasNext()) {
+                                        Map.Entry<String, JsonNode> value = fields.next();
+                                        userIdsToAvatarUrls.put(value.getKey(), value.getValue().textValue());
                                     }
                                 }
 
