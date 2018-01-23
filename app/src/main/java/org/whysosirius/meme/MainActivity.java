@@ -175,14 +175,27 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onResume() {
             super.onResume();
-//            if (adapter.memeFetcher != null && !adapter.memeFetcher.isCancelled())
-//                adapter.startKek();
+            Log.v("siriusmeme","kek");
+            if (adapter.memeFetcher != null && adapter.memeFetcher.isCancelled())
+                adapter.startKek();
         }
 
         @Override
         public void onPause() {
             super.onPause();
-//            adapter.memeFetcher.cancel(true);
+            adapter.memeFetcher.cancel(true);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            adapter.memeFetcher.cancel(true);
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            adapter.memeFetcher.cancel(true);
         }
 
         private static final String ARG_SECTION_NUMBER = "section_number";

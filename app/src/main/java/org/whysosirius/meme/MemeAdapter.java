@@ -87,6 +87,9 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     }
 
     public AsyncTask<String, ArrayList<Meme>, Void> startKek() {
+        if (memeFetcher != null)
+            memeFetcher.cancel(true);
+        memeFetcher = new MemeFetcher();
         return memeFetcher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, this.url);
     }
 
@@ -273,6 +276,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         holder.commentButton.setOnClickListener(view -> {
             Intent intent = new Intent(context, CommentsActivity.class);
             intent.putExtra("meme_id", meme.getId().toHexString());
+            intent.putExtra("title", holder.memeTitleTextView.getText());//todo send meme.getTitle()
             context.startActivity(intent);
         });
 
