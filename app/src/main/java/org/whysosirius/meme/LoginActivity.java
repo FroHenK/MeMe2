@@ -228,7 +228,8 @@ public class LoginActivity extends AppCompatActivity {
             if (status.equals("void_username")) {
                 setUsernameForm.setVisibility(View.VISIBLE);
                 loginForm.setVisibility(View.GONE);
-
+                preferences.edit().putString("avatar_url", node.get("avatar_url").asText()).apply();
+                    preferences.edit().putString("uid", node.get("user_id").asText()).apply();
                 return;
             }
             throw new IOException("unsuccessful operation");

@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -22,18 +21,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +49,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -109,7 +106,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     activity,
                     PERMISSIONS_STORAGE,
                     REQUEST_EXTERNAL_STORAGE
-            );}
+            );
+        }
     }
 
     private void refresh() {
@@ -159,9 +157,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         TextView textView = navigationView.getHeaderView(0).findViewById(R.id.username_menu);
         textView.setText(preferences.getString("username", ""));
 
+        ImageView avatar = navigationView.getHeaderView(0).findViewById(R.id.user_avatar_view);
+        Picasso.with(this).load(preferences.getString("avatar_url", "")).into(avatar);
         CompoundButton mySwitch = navigationView.getMenu().getItem(3).getActionView().findViewById(R.id.amoral_switch);
         if (Boolean.valueOf(preferences.getBoolean("is_amoral", false)).toString().equals(Boolean.valueOf(("k" + "e" + "k").equals("kek")).toString())) {
             mySwitch.setChecked(true);
@@ -173,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 refresh();
             }
         });
-
 
 
         verifyStoragePermissions(this);
@@ -227,26 +227,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onPause();
             adapter.memeFetcher.cancel(true);
         }
+
         @Override
-        public void onStart(){
+        public void onStart() {
             super.onStart();
             EventBus.getDefault().register(this);
         }
+
         @Override
         public void onStop() {
             super.onStop();
             EventBus.getDefault().unregister(this);
             adapter.memeFetcher.cancel(true);
         }
+
         @Subscribe
-        public void onNetworkChangeEvent(OnNetworkEvent event){
+        public void onNetworkChangeEvent(OnNetworkEvent event) {
             boolean state = event.isNetworkState();
-            if (state == true){
+            if (state == true) {
                 MainActivity.internetBar.dismiss();
-            }else{
+            } else {
                 //MainActivity.internetBar = Snackbar.make(,"Нет подключения к интернету", Snackbar.LENGTH_LONG);
             }
         }
+
         @Override
         public void onDestroy() {
             super.onDestroy();
@@ -278,19 +282,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             RecyclerView recyclerView = rootView.findViewById(R.id.main_recycler_view);
             ((RecyclerViewContainer) adapter).setRecyclerView(recyclerView);
-             recyclerView.setHasFixedSize(false);
+            recyclerView.setHasFixedSize(false);
             SwipeRefreshLayout refreshLayout = rootView.findViewById(R.id.memes_swipe_refresh);
             refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
                     MainActivity activity = (MainActivity) PlaceholderFragment.this.getActivity();
                     activity.refresh();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            refreshLayout.setRefreshing(false);
-                        }
-                    }, 3500); // TODO ISPRAVIT COSTIL
                 }
             });
             RecyclerView.LayoutManager layoutManager = new WrapContentLinearLayoutManager(getActivity().getApplicationContext());
@@ -313,15 +311,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 0)
-                return PlaceholderFragment.newInstance(1, firstMemeAdapter);
-            else if (position == 1)
-                return PlaceholderFragment.newInstance(2, thirdMemeAdapter);
-            else
-                if (position == 2)
-                return PlaceholderFragment.newInstance(3, subscribeMemeAdapter);
-            else
-                return PlaceholderFragment.newInstance(4, secondMemeAdapter);
+            if (position == 0) {
+                Fragment fragment = PlaceholderFragment.newInstance(1, firstMemeAdapter);
+                ((MemeAdapter) firstMemeAdapter).setFragment(fragment);
+                return fragment;
+            } else if (position == 1) {
+                Fragment fragment = PlaceholderFragment.newInstance(2, thirdMemeAdapter);
+                ((MemeAdapter) thirdMemeAdapter).setFragment(fragment);
+                return fragment;
+            } else if (position == 2) {
+                Fragment fragment = PlaceholderFragment.newInstance(3, subscribeMemeAdapter);
+                ((MemeAdapter) subscribeMemeAdapter).setFragment(fragment);
+                return fragment;
+            } else {
+
+                Fragment fragment = PlaceholderFragment.newInstance(4, secondMemeAdapter);
+                ((MemeAdapter)secondMemeAdapter).setFragment(fragment);
+                return fragment;
+            }
         }
 
         @Override
@@ -348,17 +355,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout layout = findViewById(R.id.drawer_layout);
         layout.closeDrawer(GravityCompat.START);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        if (id == R.id.my_page){
+        if (id == R.id.my_page) {
             navigationView.getMenu().getItem(0).setChecked(true);
             Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra("username", preferences.getString("username","Anonymous"));
-            intent.putExtra("user_id", preferences.getString("uid",""));
-            intent.putExtra("user_avatar_url", preferences.getString("avatar_url",""));
-            intent.putExtra("is_my_page","1");
+            intent.putExtra("username", preferences.getString("username", "Anonymous"));
+            intent.putExtra("user_id", preferences.getString("uid", ""));
+            intent.putExtra("user_avatar_url", preferences.getString("avatar_url", ""));
+            intent.putExtra("is_my_page", "1");
             startActivity(intent);
 
-        }else
-        if (id == R.id.add_mem) {
+        } else if (id == R.id.add_mem) {
             navigationView.getMenu().getItem(0).setChecked(true);
             Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -419,6 +425,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 showProgress(false, findViewById(R.id.main_content));
                 refresh();
             }
+
             /*
                         * Here we are passing image by renaming it with a unique name
                         * */

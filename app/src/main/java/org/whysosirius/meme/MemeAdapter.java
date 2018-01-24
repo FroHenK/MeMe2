@@ -11,8 +11,10 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,7 +61,7 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     protected HashMap<String, String> userIdsToUsernames;
     protected HashMap<String, String> userIdsToAvatarUrls;
     protected HashMap<String, Integer> memeIdsToIsLiked;
-
+    protected Fragment fragment;
     protected int totalPosition;
     protected long maxLoadedPosition;
     protected long totalMemesLoaded;
@@ -68,6 +70,10 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
     public MemeFetcher memeFetcher;
     SharedPreferences sharedPreferences;
     private String url;
+
+    public void setFragment(Fragment fragment) {
+        this.fragment = fragment;
+    }
 
     MemeAdapter(Context context, List<Meme> memes) {
         this.memes = memes;
@@ -336,10 +342,11 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
         CheckBox dislikeCheckBox;
         ImageView memeAuthorImageView;
         TextView memeAuthorTextView;
-
         TextView memeTitleTextView;
         ImageView memeImageView;
         Button commentButton;
+
+
 
         public ViewHolder(View view) {
             super(view);
@@ -395,7 +402,6 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                             VolleySingleton.getInstance(MemeAdapter.this.context).addToRequestQueue(request);
                             String response = future.get();
                             Log.i("siriusmeme", response);
-
                             ObjectMapper objectMapper = new ObjectMapper();
                             objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE);
                             objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
@@ -444,7 +450,12 @@ public abstract class MemeAdapter extends RecyclerView.Adapter<MemeAdapter.ViewH
                                 }
                                 MemeAdapter.this.memes.addAll(memes);
                                 recyclerView.post(() -> notifyItemRangeInserted(size, memes.size()));
-
+                                fragment.getView().post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ((SwipeRefreshLayout)fragment.getView().findViewById(R.id.memes_swipe_refresh)).setRefreshing(false);
+                                    }
+                                });
                                 publishProgress(memes);
                             }
                         }
