@@ -174,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+
+
         verifyStoragePermissions(this);
     }
 
@@ -348,6 +350,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         if (id == R.id.my_page){
             navigationView.getMenu().getItem(0).setChecked(true);
+            Intent intent = new Intent(this, ProfileActivity.class);
+            intent.putExtra("username", preferences.getString("username","Anonymous"));
+            intent.putExtra("user_id", preferences.getString("uid",""));
+            intent.putExtra("user_avatar_url", preferences.getString("avatar_url",""));
+            intent.putExtra("is_my_page","1");
+            startActivity(intent);
 
         }else
         if (id == R.id.add_mem) {

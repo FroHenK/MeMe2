@@ -57,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         firstTime = true;
         intent = getIntent();
+
         userId = intent.getStringExtra("user_id");
         userAvatarUrl = intent.getStringExtra("user_avatar_url");
 
@@ -84,6 +85,9 @@ public class ProfileActivity extends AppCompatActivity {
         fab = findViewById(R.id.profile_fab);
 
         fab.setBackgroundTintList(ColorStateList.valueOf(0x00000000));
+        if (preferences.getString("uid","").equals(userId)){
+            fab.hide();
+        }
 
         profileRecyclerView = findViewById(R.id.profile_recycler_view);
         collapsingToolbarLayout = findViewById(R.id.profile_collapsing);

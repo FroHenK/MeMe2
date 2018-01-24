@@ -176,7 +176,6 @@ public class LoginActivity extends AppCompatActivity {
             if (!node.get("status").asText().equals("success"))
                 throw new IOException("unsuccessful operation");
             String authToken = node.get("auth_token").asText();
-
             preferences.edit().putString("auth_token", authToken).commit();
             onAuthTokenReception(authToken);
         } catch (IOException e) {
@@ -219,6 +218,8 @@ public class LoginActivity extends AppCompatActivity {
             if (status.equals("success")) {
                 String username = node.get("username").asText();
                 preferences.edit().putString("username", username).commit();
+                preferences.edit().putString("avatar_url", node.get("avatar_url").asText()).apply();
+                preferences.edit().putString("uid", node.get("user_id").asText()).apply();
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 finish();
